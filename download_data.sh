@@ -111,30 +111,30 @@ COCO_FILE=${COCO_DATA_URL#*zips/}
 
 
 if [ ! -d $_arg_path ]; then
-    mkdir $_arg_path
-    cd $_arg_path
+    # mkdir $_arg_path
+    cd store
+    mkdir ln_data
+    # cd $_arg_path
 
-    mkdir referit
-    cd referit
+    # mkdir referit
+    # cd referit
 
-    printf "Downloading ReferIt dataset (This may take a while...)"
-    aria2c -x 8 $REFERIT_DATA_URL
+    # printf "Downloading ReferIt dataset (This may take a while...)"
+    # aria2c -x 8 $REFERIT_DATA_URL
 
 
-    printf "Uncompressing data..."
-    tar -xzvf $REFERIT_FILE
-    rm $REFERIT_FILE
+    # printf "Uncompressing data..."
+    # tar -xzvf $REFERIT_FILE
+    # rm $REFERIT_FILE
 
-    mkdir splits
-    cd splits
+    # mkdir splits
+    # cd splits
 
-    printf "Downloading ReferIt Splits..."
-    aria2c -x 8 $REFERIT_SPLITS_URL
+    # printf "Downloading ReferIt Splits..."
+    # aria2c -x 8 $REFERIT_SPLITS_URL
 
-    tar -xjvf $SPLIT_FILE
-    rm $SPLIT_FILE
-
-    cd ../..
+    # tar -xjvf $SPLIT_FILE
+    # rm $SPLIT_FILE
 
     mkdir -p other/images/mscoco/images
     cd other/images/mscoco/images
