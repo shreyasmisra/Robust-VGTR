@@ -55,7 +55,7 @@ class UnifiedDataset(data.Dataset):
         'copsref': 'copsref'
     }
 
-    def __init__(self, data_root, split_root='data', dataset='refcoco', imsize=512, transform=None, testmode=False, split='train', max_query_len=20, augment=False):
+    def __init__(self, data_root, split_root='data', dataset='refcoco', imsize=512, transform=None, testmode=False, split='train', max_query_len=20, augment=False, data_perc=0.3):
         self.images = []
         self.data_root = data_root
         self.split_root = split_root
@@ -107,6 +107,8 @@ class UnifiedDataset(data.Dataset):
             imgset_file = '{0}_{1}.pth'.format(self.dataset, split)
             imgset_path = osp.join(dataset_path, imgset_file)
             self.images += torch.load(imgset_path)
+        
+        self.images = self.images[:int(len(self.images)*float(data_perc))]
 
     def exists_dataset(self):
 
