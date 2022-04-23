@@ -36,7 +36,7 @@ class GroundingModel(nn.Module):
 
     def forward(self, img, expression_word_id):
 
-        img_feature, pooled_features = self.visual_encoder(img) # pooled feats - B, 128, 16, 16
+        img_feature, pooled_features = self.visual_encoder(img) # pooled feats - B, 128, 4, 4
         exp_feature = self.textual_encoder(expression_word_id) # B, 4, 256
         
         # img_projected_feats = [] # each element is 48, 256
@@ -49,9 +49,9 @@ class GroundingModel(nn.Module):
         img_exp_feature = []
 
         for feat in pooled_features:
-            x = self.downsample(feat) # B, 256, 5, 5
-            x = x.flatten(2) # B, 256, 25
-            x = torch.transpose(x, 1, 2) # B, 25, 256
+            # x = self.downsample(feat) # B, 256, 5, 5
+            x = feat.flatten(2) # B, 256, 16
+            x = torch.transpose(x, 1, 2) # B, 16, 256
             img_exp_feature.append(self.early_attn(x, exp_feature)) # [(B, 4, 256), ... ]
 
         img_exp_feature = torch.stack(img_exp_feature, dim=3) # B, 4, 256, 4
