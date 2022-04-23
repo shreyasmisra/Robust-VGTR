@@ -57,11 +57,7 @@ class GroundingModel(nn.Module):
         img_exp_feature = torch.stack(img_exp_feature, dim=3) # B, 4, 256, 4
         img_exp_feature = torch.transpose(img_exp_feature, 1, 2) # B, 256, 4, 4
         img_exp_feature = img_exp_feature.flatten(2) # B, 256, 16
-        img_exp_feature = torch.tranpose(img_exp_feature, 1, 2) # B, 16, 256
-
-        # use exp_projected_feats and img_projected_feats to input to MLP or attention 
-        # shape = 48, 256. B, 256        
-        # output of this goes into the encoder        
+        img_exp_feature = torch.transpose(img_exp_feature, 1, 2) # B, 16, 256
 
         embed = self.vgtr(img_exp_feature, exp_feature, expression_word_id)
         embed2 = torch.cat([embed[:, i] for i in range(self.num_exp_tokens)], dim=-1)

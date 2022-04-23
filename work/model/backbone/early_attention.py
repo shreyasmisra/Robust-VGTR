@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -26,7 +27,7 @@ class DotAttention(nn.Module):
         batch_size, queryL = q.size(0), q.size(1)
         batch_size, imgL = k.size(0), k.size(1)
 
-        energy = torch.div(torch.bmm(k, torch.transpose(q, 1, 2)), torch.sqrt(self.dim)) # B, 25, 4
+        energy = torch.div(torch.bmm(k, torch.transpose(q, 1, 2)), np.sqrt(self.dim)) # B, 25, 4
 
         if mask:
             energy.masked_fill_(mask, -1e9)
