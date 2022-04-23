@@ -30,7 +30,7 @@ class GroundingModel(nn.Module):
         self.pooled_feats_linear = nn.Linear(2048, 256) # make part of args
         self.exp_feats_linear = nn.Linear(1024, 256)
 
-        self.downsample = nn.Conv2d(128, 256, kernel_size=7, stride=2)
+        self.downsample = nn.Conv2d(128, 256, kernel_size=1, stride=1)
 
         self.early_attn = DotAttention()
 
@@ -49,8 +49,8 @@ class GroundingModel(nn.Module):
         img_exp_feature = []
 
         for feat in pooled_features:
-            # x = self.downsample(feat) # B, 256, 5, 5
-            x = feat.flatten(2) # B, 256, 16
+            x = self.downsample(feat) # B, 256, 4, 4
+            x = x.flatten(2) # B, 256, 16
             x = torch.transpose(x, 1, 2) # B, 16, 256
             img_exp_feature.append(self.early_attn(x, exp_feature)) # [(B, 4, 256), ... ]
 
