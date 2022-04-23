@@ -32,7 +32,10 @@ class VGEncoder(nn.Module):
     def forward(self, img_exp_fused_feat, pos_feature, expression_feature, word_id=None, exp_pos_feature=None):
 
         src = img_exp_fused_feat.permute(1, 0, 2)  # (4, B, 256)
-        pos_embed = pos_feature.permute(1, 0, 2)
+        # pos_feature -> 20, 1, 256
+        #print(pos_feature.shape, src.shape)
+        #pos_embed = pos_feature.permute(1, 0, 2)
+        pos_embed = pos_feature
 
         out, expf = self.encoder(src, expression_feature, pos=pos_embed, exp_pos_feature=exp_pos_feature)
         out = out.transpose(0, 1)

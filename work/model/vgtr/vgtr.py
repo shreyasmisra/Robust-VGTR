@@ -33,15 +33,16 @@ class VGTR(nn.Module):
         sent -> B, 4, 256
         """
 
-        pos_feature = self.pos_encoder_1d(img_exp_fused)
+        pos_feature = self.pos_encoder_1d(img_exp_fused.transpose(0, 1)) # 16, 1, 256
 
         # encoder
         # fused_vis_feature, fused_exp_feature = self.encoder(self.input_proj(img), pos_feature, sent)
         fused_vis_feature, fused_exp_feature = self.encoder(img_exp_fused, pos_feature, sent)
-
+        
+        #print(fused_vis_feature.shape)
         # decoder
         out = self.decoder(fused_vis_feature.transpose(0, 1), fused_exp_feature,
-                           pos_feature=pos_feature.flatten(2).permute(2, 0, 1))
+                           pos_feature=pos_feature)
 
         return out.transpose(0, 1)
 
