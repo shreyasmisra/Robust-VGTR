@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class DotAttention(nn.Module):
     def __init__(self, dim = 256, l_norm=False):
-        super(DotAttention).__init__
+        super(DotAttention, self).__init__()
         """
         attention = softmax(Q.K/sqrt(d)).V
         """
@@ -46,7 +46,7 @@ class DotAttention(nn.Module):
 
 class ImageTextStackedAttention(nn.Module):
     def __init__(self):
-        super(ImageTextStackedAttention).__init__
+        super(ImageTextStackedAttention, self).__init__()
     
     def forward(self, img_feats, exp_feats):
         q = exp_feats
@@ -54,7 +54,7 @@ class ImageTextStackedAttention(nn.Module):
 
 class TextImageStackedAttention(nn.Module):
     def __init__(self):
-        super(TextImageStackedAttention).__init__
+        super(TextImageStackedAttention, self).__init__()
     
     def forward(self, img_feats, exp_feats):
         q = exp_feats
