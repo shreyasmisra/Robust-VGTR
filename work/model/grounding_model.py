@@ -46,15 +46,22 @@ class GroundingModel(nn.Module):
 
         # exp_projected_feats = self.exp_feats_linear(exp_feature.flatten(1)) # 48, 256
 
-        pooled_features = self.downsample(pooled_features) # B, 256, 5, 5
-        pooled_features = pooled_features.flatten(2) # B, 256, 25
-        pooled_features = torch.transpose(pooled_features, 1, 2) # B, 25, 256
+        img_exp_feature = []
+
+        for feat in pooled_features:
+            x = self.downsample(feat) # B, 256, 5, 5
+            x = x.flatten(2) # B, 256, 25
+            x = torch.transpose(x, 1, 2) # B, 25, 256
+            img_exp_feature.append(self.early_attn(x, exp_feature)) # [(B, 4, 256), ... ]
+
+        img_exp_feature = torch.stack(img_exp_feature, dim=3) # B, 4, 256, 4
+        img_exp_feature = torch.transpose(img_exp_feature, 1, 2) # B, 256, 4, 4
+        img_exp_feature = img_exp_feature.flatten(2) # B, 256, 16
+        img_exp_feature = torch.tranpose(img_exp_feature, 1, 2) # B, 16, 256
 
         # use exp_projected_feats and img_projected_feats to input to MLP or attention 
         # shape = 48, 256. B, 256        
-        # output of this goes into the encoder
-
-        img_exp_feature = self.early_attn(pooled_features, exp_feature) # B, 4, 256 (OUT)
+        # output of this goes into the encoder        
 
         embed = self.vgtr(img_exp_feature, exp_feature, expression_word_id)
         embed2 = torch.cat([embed[:, i] for i in range(self.num_exp_tokens)], dim=-1)
