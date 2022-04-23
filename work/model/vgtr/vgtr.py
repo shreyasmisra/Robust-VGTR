@@ -1,7 +1,8 @@
 import torch.nn as nn
-from .vg_encoder import VGEncoder
+# from .vg_encoder import VGEncoder
 from .vg_decoder import VGDecoder
-from .position_encoding import PositionEmbeddingSine
+from .position_encoding import PositionEmbeddingSine, PositionEncoding1D
+from .vg_encoder_without_cross_fusion import VGEncoder
 
 
 class VGTR(nn.Module):
@@ -24,12 +25,19 @@ class VGTR(nn.Module):
 
         self.pos_encoder = PositionEmbeddingSine(args.hidden_dim // 2, normalize=False)
 
-    def forward(self, img, sent, sent_id):
+        self.pos_encoder_1d = PositionEncoding1D(256)
 
-        pos_feature = self.pos_encoder(img)
+    def forward(self, img_exp_fused, sent, sent_id):
+        """
+        img_exp_fused -> B, 4, 256
+        sent -> B, 4, 256
+        """
+
+        pos_feature = self.pos_encoder_1d(img_exp_fused)
 
         # encoder
-        fused_vis_feature, fused_exp_feature = self.encoder(self.input_proj(img), pos_feature, sent)
+        # fused_vis_feature, fused_exp_feature = self.encoder(self.input_proj(img), pos_feature, sent)
+        fused_vis_feature, fused_exp_feature = self.encoder(img_exp_fused, pos_feature, sent)
 
         # decoder
         out = self.decoder(fused_vis_feature.transpose(0, 1), fused_exp_feature,

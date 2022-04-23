@@ -10,31 +10,38 @@ class DotAttention(nn.Module):
         attention = softmax(Q.K/sqrt(d)).V
         """
         self.l_norm = l_norm
+        self.dim = dim
         if l_norm:
             self.norm = nn.LayerNorm(dim)
     
     def forward(self, img_feats, exp_feats, mask=None):
         """
-        img_features -> (48, 256). 
-        exp_features -> (48, 256). 
+        img_features -> B, 25, 256. 
+        exp_features -> B, 4, 256
         """
-        k = v = img_feats
+        
         q = exp_feats
+        k = v = img_feats
 
-        energy = torch.div(torch.bmm(k, q), torch.sqrt(k.shape[1]))
+        batch_size, queryL = q.size(0), q.size(1)
+        batch_size, imgL = k.size(0), k.size(1)
 
-        # optional: apply mask
+        energy = torch.div(torch.bmm(k, torch.transpose(q, 1, 2)), torch.sqrt(self.dim)) # B, 25, 4
+
         if mask:
             energy.masked_fill_(mask, -1e9)
 
-        attn = F.softmax(energy, dim=1)
+        energy = energy.view(batch_size*imgL, queryL)
 
-        context = torch.bmm(attn, v)
+        attn = nn.Softmax()(energy)
+        attn = attn.view(batch_size, imgL, queryL) # B, 25, 4
+        
+        context = torch.bmm(torch.transpose(attn, 1, 2), v) # B, 4, 25 * B, 25, 256 -> B, 4, 256 (OUT)
 
         if self.l_norm:
             return self.norm(context)
 
-        return context
+        return context # B, 4, 256 (OUT)
 
 
 class ImageTextStackedAttention(nn.Module):

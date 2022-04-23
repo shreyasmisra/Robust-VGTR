@@ -31,8 +31,8 @@ class VGEncoder(nn.Module):
 
     def forward(self, img_exp_fused_feat, pos_feature, expression_feature, word_id=None, exp_pos_feature=None):
 
-        src = img_exp_fused_feat.flatten(2).permute(2, 0, 1)  # (hw, bs, d)
-        pos_embed = pos_feature.flatten(2).permute(2, 0, 1)
+        src = img_exp_fused_feat.permute(1, 0, 2)  # (4, B, 256)
+        pos_embed = pos_feature.permute(1, 0, 2)
 
         out, expf = self.encoder(src, expression_feature, pos=pos_embed, exp_pos_feature=exp_pos_feature)
         out = out.transpose(0, 1)
@@ -112,7 +112,7 @@ class EncoderLayer1(nn.Module):
 
         # self-attn for img-text fused feature
         src2 = self.norm1(src)
-        q = k = self.with_pos_embed(src2, pos)  # q: (hw, bs, d)
+        q = k = self.with_pos_embed(src2, pos)  # q: (hw, bs, d) (4, B, 256)
 
         src2 = self.self_attn(q, k, value=src2)[0]
         src = src + self.dropout1(src2)
