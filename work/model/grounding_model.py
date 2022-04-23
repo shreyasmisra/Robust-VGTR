@@ -27,7 +27,7 @@ class GroundingModel(nn.Module):
 
     def forward(self, img, expression_word_id):
 
-        img_feature = self.visual_encoder(img)
+        img_feature, pooled_features = self.visual_encoder(img)
         exp_feature = self.textual_encoder(expression_word_id)
 
         embed = self.vgtr(img_feature, exp_feature, expression_word_id)
