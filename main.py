@@ -84,6 +84,8 @@ def getargs():
                         help='split subset for test')
     parser.add_argument('--cnn_path', default='store/pth/resnet50_detr.pth', type=str,
                         help='pretrained cnn weights')
+    parser.add_argument('--data_perc', default='0.3', type=str,
+                        help='percentage of data to be used')
     args = parser.parse_args()
 
     # refcoco/refcoco+
@@ -217,6 +219,6 @@ if __name__ == "__main__":
         print('Starting Test....')
         test(args)
     else:
-    	print('Starting Training....')
+        print('Starting Training....')
         train(args)
         

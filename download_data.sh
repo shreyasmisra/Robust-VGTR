@@ -136,6 +136,7 @@ if [ ! -d $_arg_path ]; then
     # tar -xjvf $SPLIT_FILE
     # rm $SPLIT_FILE
 
+    cd ln_data
     mkdir -p other/images/mscoco/images
     cd other/images/mscoco/images
 
