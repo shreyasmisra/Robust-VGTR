@@ -119,7 +119,7 @@ class Neck(nn.Module):
         return torch.nn.functional.interpolate(feat1, size=(H, W), mode='bilinear',
                                                align_corners=True) + feat2
 
-    def pool_features(self, feats, out_size = 4):
+    def pool_features(self, feats, out_size = 8):
         pooled_feats = []
         pool = nn.AdaptiveAvgPool2d((out_size, out_size))
         

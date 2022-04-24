@@ -6,7 +6,8 @@ from .backbone.visual_backbone import build_visual_backbone
 from .backbone.rnn import build_textual_encoder
 from .vgtr.vgtr import build_vgtr
 
-from .backbone.early_attention import DotAttention
+from .backbone.early_attention import DotAttention, CosineAttention
+from .vgtr.position_encoding import PositionEmbeddingSine
 
 class GroundingModel(nn.Module):
 
@@ -30,9 +31,11 @@ class GroundingModel(nn.Module):
         self.pooled_feats_linear = nn.Linear(2048, 256) # make part of args
         self.exp_feats_linear = nn.Linear(1024, 256)
 
-        self.downsample = nn.Conv2d(128, 256, kernel_size=1, stride=1)
+        self.pos_encoder = PositionEmbeddingSine(args.hidden_dim, normalize=False)
+        self.pointwise = nn.Conv2d(128, 256, kernel_size=1, stride=1)
 
-        self.early_attn = DotAttention()
+        self.early_attn = DotAttention(l_norm=True)
+        self.cosine_attn = CosineAttention()
 
     def forward(self, img, expression_word_id):
 
@@ -47,10 +50,17 @@ class GroundingModel(nn.Module):
         # exp_projected_feats = self.exp_feats_linear(exp_feature.flatten(1)) # 48, 256
 
         img_exp_feature = []
+        pos_embed = []
 
         for feat in pooled_features:
-            x = self.downsample(feat) # B, 256, 4, 4
-            x = x.flatten(2) # B, 256, 16
+            
+            x_high_channels = self.pointwise(feat) # B, 256, 4, 4
+            x_pos_encode = self.pos_encoder(x_high_channels) # might have to transpose x before pos_encoder
+            print('pos embed out', x_pos_encode.shape)
+            x = x_pos_encode.flatten(2) # B, 256, 16
+            #maybe flatten x_pos_embed here and then append
+            pos_embed.append(x)
+
             x = torch.transpose(x, 1, 2) # B, 16, 256
             img_exp_feature.append(self.early_attn(x, exp_feature)) # [(B, 4, 256), ... ]
 
@@ -59,7 +69,10 @@ class GroundingModel(nn.Module):
         img_exp_feature = img_exp_feature.flatten(2) # B, 256, 16
         img_exp_feature = torch.transpose(img_exp_feature, 1, 2) # B, 16, 256
 
-        embed = self.vgtr(img_exp_feature, exp_feature, expression_word_id)
+        # pos_embed = torch.stack(pos_embed, dim=3)
+        # transform pos_embed
+
+        embed = self.vgtr(img_exp_feature, exp_feature, None, expression_word_id)
         embed2 = torch.cat([embed[:, i] for i in range(self.num_exp_tokens)], dim=-1)
 
         pred = self.prediction_head(embed2).sigmoid()
