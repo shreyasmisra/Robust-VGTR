@@ -50,16 +50,24 @@ class GroundingModel(nn.Module):
         # exp_projected_feats = self.exp_feats_linear(exp_feature.flatten(1)) # 48, 256
 
         img_exp_feature = []
-        pos_embed = []
+        
 
+        # increasing number of channels
+        x_high_channels = []
         for feat in pooled_features:
-            
-            x_high_channels = self.pointwise(feat) # B, 256, 4, 4
+            x_high_channels.append(self.pointwise(feat)) # B, 256, 4, 4
+
+        # finding positional encoding
+        pos_embed = []
+        for feat in x_high_channels:
             x_pos_encode = self.pos_encoder(x_high_channels) # might have to transpose x before pos_encoder
             print('pos embed out', x_pos_encode.shape)
-            x = x_pos_encode.flatten(2) # B, 256, 16
+            pos_embed.append(x_pos_encode.flatten(2))
+
+        # calculating cross-attention
+        for feat in x_high_channels:           
+            x = feat.flatten(2) # B, 256, 16
             #maybe flatten x_pos_embed here and then append
-            pos_embed.append(x)
 
             x = torch.transpose(x, 1, 2) # B, 16, 256
             img_exp_feature.append(self.early_attn(x, exp_feature)) # [(B, 4, 256), ... ]
@@ -71,7 +79,7 @@ class GroundingModel(nn.Module):
 
         # pos_embed = torch.stack(pos_embed, dim=3)
         # transform pos_embed
-
+        abort
         embed = self.vgtr(img_exp_feature, exp_feature, None, expression_word_id)
         embed2 = torch.cat([embed[:, i] for i in range(self.num_exp_tokens)], dim=-1)
 
