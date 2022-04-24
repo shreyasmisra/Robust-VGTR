@@ -74,13 +74,15 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
                         'Loss_giou {loss_giou.val:.4f} ({loss_giou.avg:.4f})\t' \
                         'Accu {acc.val:.4f} ({acc.avg:.4f})\t' \
                         'Mean_iu {miou.val:.4f} ({miou.avg:.4f})\t' \
+                        'Lr {lr:.04f}\t' \
                 .format(epoch+1, batch_idx+1, len(train_loader),
                         batch_time=batch_time,
                         loss=losses,
                         loss_box=losses_bbox,
                         loss_giou=losses_giou,
                         acc=acc,
-                        miou=miou)
+                        miou=miou,
+                        lr=float(optimizer.param_groups[0]['lr']))
 
             print(print_str)
             logging.info(print_str)

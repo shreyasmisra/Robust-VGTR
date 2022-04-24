@@ -7,7 +7,7 @@ from .backbone.rnn import build_textual_encoder
 from .vgtr.vgtr import build_vgtr
 
 from .backbone.early_attention import DotAttention, CosineAttention
-from .vgtr.position_encoding import PositionEmbeddingSine
+from .vgtr.position_encoding import PositionEmbeddingSine, PositionEncoding1D
 
 class GroundingModel(nn.Module):
 
@@ -31,26 +31,19 @@ class GroundingModel(nn.Module):
         self.pooled_feats_linear = nn.Linear(2048, 256) # make part of args
         self.exp_feats_linear = nn.Linear(1024, 256)
 
-        self.pos_encoder = PositionEmbeddingSine(args.hidden_dim, normalize=False)
+        self.pos_encoder = PositionEmbeddingSine(args.hidden_dim//2, normalize=False)
+        self.pos_encoder_1d = PositionEncoding1D(256)
         self.pointwise = nn.Conv2d(128, 256, kernel_size=1, stride=1)
 
         self.early_attn = DotAttention(l_norm=True)
         self.cosine_attn = CosineAttention()
-
+        
     def forward(self, img, expression_word_id):
 
         img_feature, pooled_features = self.visual_encoder(img) # pooled feats - B, 128, 4, 4
         exp_feature = self.textual_encoder(expression_word_id) # B, 4, 256
         
-        # img_projected_feats = [] # each element is 48, 256
-        # for i in range(len(pooled_features)):
-        #     pooled_feats_flatten = pooled_features[i].flatten(2).flatten(1)
-        #     img_projected_feats.append(self.pooled_feats_linear(pooled_feats_flatten))
-
-        # exp_projected_feats = self.exp_feats_linear(exp_feature.flatten(1)) # 48, 256
-
         img_exp_feature = []
-        
 
         # increasing number of channels
         x_high_channels = []
@@ -60,26 +53,23 @@ class GroundingModel(nn.Module):
         # finding positional encoding
         pos_embed = []
         for feat in x_high_channels:
-            x_pos_encode = self.pos_encoder(x_high_channels) # might have to transpose x before pos_encoder
-            print('pos embed out', x_pos_encode.shape)
-            pos_embed.append(x_pos_encode.flatten(2))
+            pos_encode = self.pos_encoder(feat)
+            #print('pos embed out', pos_encode.shape)
+            pos_embed.append(pos_encode)
 
         # calculating cross-attention
-        for feat in x_high_channels:           
+        for i, feat in enumerate(x_high_channels):           
+        
+            feat = feat + pos_embed[i] # early addition.  
             x = feat.flatten(2) # B, 256, 16
-            #maybe flatten x_pos_embed here and then append
 
             x = torch.transpose(x, 1, 2) # B, 16, 256
             img_exp_feature.append(self.early_attn(x, exp_feature)) # [(B, 4, 256), ... ]
 
-        img_exp_feature = torch.stack(img_exp_feature, dim=3) # B, 4, 256, 4
-        img_exp_feature = torch.transpose(img_exp_feature, 1, 2) # B, 256, 4, 4
-        img_exp_feature = img_exp_feature.flatten(2) # B, 256, 16
-        img_exp_feature = torch.transpose(img_exp_feature, 1, 2) # B, 16, 256
-
-        # pos_embed = torch.stack(pos_embed, dim=3)
-        # transform pos_embed
-        abort
+        img_exp_feature = torch.cat(img_exp_feature, dim=1) # B, 16, 256
+        
+        #pos_embed = torch.stack(pos_embed, dim=3)
+        
         embed = self.vgtr(img_exp_feature, exp_feature, None, expression_word_id)
         embed2 = torch.cat([embed[:, i] for i in range(self.num_exp_tokens)], dim=-1)
 

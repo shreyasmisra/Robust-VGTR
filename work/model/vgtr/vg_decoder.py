@@ -102,6 +102,7 @@ class DecoderLayer(nn.Module):
         tgt2 = self.self_attn(q, k, value=tgt2)[0]
         tgt = tgt + self.dropout1(tgt2)
         tgt2 = self.norm2(tgt)
+        #print(memory.shape)
         tgt2 = self.multihead_attn(query=self.with_pos_embed(tgt2, query_pos),
                                    key=self.with_pos_embed(memory, pos),
                                    value=memory)[0]
