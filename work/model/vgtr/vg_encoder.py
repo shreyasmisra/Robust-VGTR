@@ -55,8 +55,11 @@ class VGEncoder(nn.Module):
 
     def forward(self, img_feature, pos_feature, expression_feature, word_id=None, exp_pos_feature=None):
 
-        src = img_feature.flatten(2).permute(2, 0, 1)  # (hw, bs, d)
-        pos_embed = pos_feature.flatten(2).permute(2, 0, 1)
+        # src = img_feature.flatten(2).permute(2, 0, 1)  # (hw, bs, d)
+        # pos_embed = pos_feature.flatten(2).permute(2, 0, 1)
+
+        src = img_feature.permute(1, 0, 2)
+        pos_embed = pos_feature
 
         out, expf = self.encoder(src, expression_feature, pos=pos_embed, exp_pos_feature=exp_pos_feature)
         out = out.transpose(0, 1)
