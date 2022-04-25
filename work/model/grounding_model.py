@@ -38,7 +38,11 @@ class GroundingModel(nn.Module):
 
         self.early_attn = DotAttention(l_norm=False)
         self.cosine_attn = CosineAttention()
+<<<<<<< HEAD
         self.co_attn = CoAttention()
+=======
+        self.co_attention = CoAttention()
+>>>>>>> f27cf9a6d6b9c604e55591818a469e8b804a84f3
         
     def forward(self, img, expression_word_id):
 
@@ -66,7 +70,12 @@ class GroundingModel(nn.Module):
             x = feat.flatten(2) # B, 256, 16
 
             x = torch.transpose(x, 1, 2) # B, 16, 256
+<<<<<<< HEAD
             img_exp_feature.append(self.co_attn(x, exp_feature)) # [(B, 4, 256), ... ]
+=======
+            #img_exp_feature.append(self.early_attn(x, exp_feature)) # [(B, 4, 256), ... ]
+            img_exp_feature.append(self.co_attention(x, exp_feature))
+>>>>>>> f27cf9a6d6b9c604e55591818a469e8b804a84f3
 
         img_exp_feature = torch.cat(img_exp_feature, dim=1) # B, 16, 256
         img_exp_feature = torch.sigmoid(img_exp_feature)

@@ -1,8 +1,8 @@
 import torch.nn as nn
-# from .vg_encoder import VGEncoder
+from .vg_encoder import VGEncoder
 from .vg_decoder import VGDecoder
 from .position_encoding import PositionEmbeddingSine, PositionEncoding1D
-from .vg_encoder_without_cross_fusion import VGEncoder
+#from .vg_encoder_without_cross_fusion import VGEncoder
 
 
 class VGTR(nn.Module):
