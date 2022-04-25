@@ -27,22 +27,26 @@ class VGTR(nn.Module):
 
         self.pos_encoder_1d = PositionEncoding1D(256)
 
-    def forward(self, img_exp_fused, sent, pos_feature, sent_id):
+    def forward(self, img_feature, img_exp_fused, sent, pos_feature, sent_id):
         """
         img_exp_fused -> B, 4, 256
         sent -> B, 4, 256
         """
 
-        # pos_feature = self.pos_encoder_1d(img_exp_fused.transpose(0, 1)) # 16, 1, 256 # moved too grounding model
+        pos_feature = self.pos_encoder(img_feature) # 16, 1, 256 # moved too grounding model
 
         # encoder
         # fused_vis_feature, fused_exp_feature = self.encoder(self.input_proj(img), pos_feature, sent)
-        fused_vis_feature, fused_exp_feature = self.encoder(img_exp_fused, pos_feature, sent)
+        # fused_vis_feature, fused_exp_feature = self.encoder(img_exp_fused, pos_feature, sent)
+        fused_vis_feature, fused_exp_feature = self.encoder(img_feature, pos_feature, sent)
         
         #print(fused_vis_feature.shape)
         # decoder
-        out = self.decoder(fused_vis_feature.transpose(0, 1), fused_exp_feature,
-                           pos_feature=pos_feature)
+        # out = self.decoder(fused_vis_feature.transpose(0, 1), fused_exp_feature,
+        #                    pos_feature=pos_feature)
+        out = self.decoder(img_exp_fused.transpose(0, 1), fused_exp_feature,
+                           pos_feature=None)
+                           
 
         return out.transpose(0, 1)
 
