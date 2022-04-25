@@ -6,7 +6,7 @@ from .backbone.visual_backbone import build_visual_backbone
 from .backbone.rnn import build_textual_encoder
 from .vgtr.vgtr import build_vgtr
 
-from .backbone.early_attention import DotAttention, CosineAttention
+from .backbone.early_attention import DotAttention, CosineAttention, CoAttention
 from .vgtr.position_encoding import PositionEmbeddingSine, PositionEncoding1D
 
 class GroundingModel(nn.Module):
@@ -37,6 +37,7 @@ class GroundingModel(nn.Module):
 
         self.early_attn = DotAttention(l_norm=True)
         self.cosine_attn = CosineAttention()
+        self.co_attention = CoAttention()
         
     def forward(self, img, expression_word_id):
 
@@ -64,7 +65,8 @@ class GroundingModel(nn.Module):
             x = feat.flatten(2) # B, 256, 16
 
             x = torch.transpose(x, 1, 2) # B, 16, 256
-            img_exp_feature.append(self.early_attn(x, exp_feature)) # [(B, 4, 256), ... ]
+            #img_exp_feature.append(self.early_attn(x, exp_feature)) # [(B, 4, 256), ... ]
+            img_exp_feature.append(self.co_attention(x, exp_feature))
 
         img_exp_feature = torch.cat(img_exp_feature, dim=1) # B, 16, 256
         
