@@ -35,7 +35,7 @@ class GroundingModel(nn.Module):
         self.pos_encoder_1d = PositionEncoding1D(256)
         self.pointwise = nn.Conv2d(128, 256, kernel_size=1, stride=1)
 
-        self.early_attn = DotAttention(l_norm=True)
+        self.early_attn = DotAttention(l_norm=False)
         self.cosine_attn = CosineAttention()
         self.co_attention = CoAttention()
         

@@ -54,18 +54,19 @@ class CosineAttention(nn.Module):
         if l_norm:
             self.norm = nn.LayerNorm(dim)
     
-    def forward(self, img_feats, exp_feats):
+    def forward(self, k, q):
         """
         img_features -> B, 25, 256. 
         exp_features -> B, 4, 256
+        Both have to be the same shape for cosine similarity
         """
         
-        q = exp_feats
-        k = v = img_feats
+        v = k
 
         batch_size, queryL = q.size(0), q.size(1)
         batch_size, imgL = k.size(0), k.size(1)
 
+        # this wont work as k and q should have matching shapes
         energy = F.cosine_similarity(k, torch.transpose(q, 1, 2)) # B, 25, 4
 
         energy = energy.view(batch_size*imgL, queryL)
@@ -135,10 +136,17 @@ class TextImageStackedAttention(nn.Module):
         context = self.attention(exp_feats, img_feats)
         similarity = self.cosine_similarity(exp_feats, context, dim=2) # check the dims
 
-class ImageTextStackedAttention(nn.Module):
-    def __init__(self):
-        super(ImageTextStackedAttention, self).__init__()
+class CoAttention(nn.Module):
+    def __init__(self, dim=256):
+        super(CoAttention, self).__init__()
+
+        self.dim = dim
+        self.attn = DotAttention(dim)
     
     def forward(self, img_feats, exp_feats):
-        q = exp_feats
-        k = v = img_feats
+        visual_attention  = self.attn.forward(img_feats, exp_feats)
+
+        co_attn = self.attn.forward(exp_feats, visual_attention)
+
+        return co_attn
+
