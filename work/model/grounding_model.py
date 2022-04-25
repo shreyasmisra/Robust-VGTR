@@ -62,14 +62,14 @@ class GroundingModel(nn.Module):
         # calculating cross-attention
         for i, feat in enumerate(x_high_channels):           
         
-            #feat = feat + pos_embed[i] # early addition.  
+            feat = feat + pos_embed[i] # early addition.  
             x = feat.flatten(2) # B, 256, 16
 
             x = torch.transpose(x, 1, 2) # B, 16, 256
             img_exp_feature.append(self.co_attn(x, exp_feature)) # [(B, 4, 256), ... ]
 
         img_exp_feature = torch.cat(img_exp_feature, dim=1) # B, 16, 256
-        img_exp_feature = torch.sigmoid(img_exp_feature)
+        #img_exp_feature = torch.sigmoid(img_exp_feature)
         #pos_embed = torch.stack(pos_embed, dim=3)
         
         embed = self.vgtr(img_feature, img_exp_feature, exp_feature, None, expression_word_id)

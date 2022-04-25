@@ -33,13 +33,12 @@ class VGTR(nn.Module):
         sent -> B, 4, 256
         """
 
-        pos_feature = self.pos_encoder(img_feature) # 16, 1, 256 # moved too grounding model
+        #pos_feature = self.pos_encoder(img_feature) # 16, 1, 256 # moved too grounding model
         #print(pos_feature.shape)
 
         # encoder
         # fused_vis_feature, fused_exp_feature = self.encoder(self.input_proj(img), pos_feature, sent)
-        # fused_vis_feature, fused_exp_feature = self.encoder(img_exp_fused, pos_feature, sent)
-        fused_vis_feature, fused_exp_feature = self.encoder(self.input_proj(img_feature), pos_feature, sent)
+        fused_vis_feature, fused_exp_feature = self.encoder(img_exp_fused, pos_feature, sent)
         
         #print(img_exp_fused.shape)
         # decoder
