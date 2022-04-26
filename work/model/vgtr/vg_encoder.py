@@ -7,6 +7,33 @@ from torch import nn, Tensor
 import numpy as np
 
 
+class TextGuidedCoAttention(nn.Module):
+    def __init__(self, d_model=256, l_norm=True):
+        super(TextGuidedCoAttention, self).__init__()
+        self.l_norm = l_norm
+        if l_norm:
+            self.norm = nn.LayerNorm(d_model)
+    
+    def forward(self, exp_feat, img_feat):
+        d_k = img_feat.shape[-1]
+        energy = torch.bmm(img_feat, torch.transpose(exp_feat, 1, 2)) / np.sqrt(d_k)
+
+        attn = F.softmax(energy.tranpose(1, 2), dim=-1)
+        context = torch.bmm(attn, img_feat)
+
+        if self.l_norm:
+            context = self.norm(context)
+        
+        energy2 = torch.bmm(exp_feat, torch.transpose(context, 1, 2))/ np.sqrt(d_k)
+        attn2 = F.softmax(energy2.tranpose(1, 2), dim=-1)
+        context2 = torch.bmm(attn2, exp_feat)
+
+        if self.l_norm:
+            return self.norm(img_feat + context2)
+        else:
+            return img_feat + context2
+
+
 class TextGuidedQ(nn.Module):
     def __init__(self, d_model=256, l_norm=True):
         super(TextGuidedQ, self).__init__()
@@ -21,7 +48,7 @@ class TextGuidedQ(nn.Module):
         if attn_mask is not None:
             scores.masked_fill_(attn_mask, -1e9)
 
-        attn = torch.nn.functional.softmax(scores.transpose(-1, -2), dim=-1)
+        attn = F.softmax(scores.transpose(-1, -2), dim=-1)
         context = torch.matmul(attn, exp_f)
 
         if self.l_norm:
@@ -55,11 +82,11 @@ class VGEncoder(nn.Module):
 
     def forward(self, img_feature, pos_feature, expression_feature, word_id=None, exp_pos_feature=None):
 
-        #src = img_feature.flatten(2).permute(2, 0, 1)  # (hw, bs, d)
-        #pos_embed = pos_feature.flatten(2).permute(2, 0, 1)
+        src = img_feature.flatten(2).permute(2, 0, 1)  # (hw, bs, d)
+        pos_embed = pos_feature.flatten(2).permute(2, 0, 1)
 
-        src = img_feature.permute(1, 0, 2)
-        pos_embed = pos_feature
+        # src = img_feature.permute(1, 0, 2)
+        # pos_embed = pos_feature
 
         out, expf = self.encoder(src, expression_feature, pos=pos_embed, exp_pos_feature=exp_pos_feature)
         out = out.transpose(0, 1)
@@ -117,6 +144,7 @@ class EncoderLayer(nn.Module):
         self.expression_ffn_dropout2 = nn.Dropout(dropout)
         self.expression_ffn_activation = _get_activation_fn(activation)
         self.text_guided = TextGuidedQ(d_model=d_model)
+        self.co_attention = TextGuidedCoAttention(d_model=d_model)
 
     def with_pos_embed(self, tensor, pos: Optional[Tensor]):
         return tensor if pos is None else tensor + pos
@@ -143,7 +171,8 @@ class EncoderLayer(nn.Module):
         q = k = self.with_pos_embed(src2, pos)  # q: (hw, bs, d)
         # text guided
         q = q.transpose(0, 1)
-        q = self.text_guided(expression_feature, q).transpose(0, 1)
+        # q = self.text_guided(expression_feature, q).transpose(0, 1)
+        q = self.co_attention(expression_feature, q).transpose(0, 1)
 
         src2 = self.self_attn(q, k, value=src2)[0]
         src = src + self.dropout1(src2)
