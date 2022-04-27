@@ -15,23 +15,26 @@ class TextGuidedCoAttention(nn.Module):
             self.norm = nn.LayerNorm(d_model)
     
     def forward(self, exp_feat, img_feat):
+        # print(img_feat.shape, exp_feat.shape) # torch.Size([48, 256, 256]) torch.Size([48, 4, 256])
         d_k = img_feat.shape[-1]
-        energy = torch.bmm(img_feat, torch.transpose(exp_feat, 1, 2)) / np.sqrt(d_k)
-
-        attn = F.softmax(energy.tranpose(1, 2), dim=-1)
-        context = torch.bmm(attn, img_feat)
-
-        if self.l_norm:
-            context = self.norm(context)
+        energy = torch.bmm(exp_feat, img_feat) / np.sqrt(d_k) # torch.Size([48, 4, 256])
         
-        energy2 = torch.bmm(exp_feat, torch.transpose(context, 1, 2))/ np.sqrt(d_k)
-        attn2 = F.softmax(energy2.tranpose(1, 2), dim=-1)
-        context2 = torch.bmm(attn2, exp_feat)
+        attn = F.softmax(energy, dim=-1) # torch.Size([48, 4, 256])
+        context = torch.bmm(attn.transpose(1, 2), exp_feat) # torch.Size([48, 256, 256])
 
         if self.l_norm:
-            return self.norm(img_feat + context2)
+            context = self.norm(img_feat + context)
         else:
-            return img_feat + context2
+            context = img_feat + context
+        
+        energy2 = torch.bmm(context, torch.transpose(exp_feat, 1, 2))/ np.sqrt(d_k) # torch.Size([48, 256, 4])
+        attn2 = F.softmax(energy2.transpose(1, 2), dim=-1) # # torch.Size([48, 4, 256])
+        context2 = torch.bmm(attn2.transpose(1, 2), exp_feat) # torch.Size([48, 256, 256])
+
+        if self.l_norm:
+            return self.norm(context2)
+        else:
+            return context2
 
 
 class TextGuidedQ(nn.Module):
