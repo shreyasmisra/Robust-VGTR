@@ -30,8 +30,8 @@ class GroundingModel(nn.Module):
 
     def forward(self, img, expression_word_id):
 
-        img_feature, pooled_features = self.visual_encoder(img)
-        exp_feature = self.textual_encoder(expression_word_id)
+        img_feature, pooled_features = self.visual_encoder(img) #img_feature = (48, 2048, 16, 16)
+        exp_feature = self.textual_encoder(expression_word_id) #exp_feature = (48, 4, 256)
         
         img_projected_feats = [] # each element is 48, 256
         for i in range(len(pooled_features)):
@@ -49,4 +49,4 @@ class GroundingModel(nn.Module):
 
         pred = self.prediction_head(embed2).sigmoid()
 
-        return pred
+        return img_feature, exp_feature, pred

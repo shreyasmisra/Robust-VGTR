@@ -6,12 +6,35 @@ import torch.nn.functional as F
 import numpy as np
 import math
 
+
+
+class ContrastiveLoss(nn.Module):
+    def __init__(self, image_feat, text_feat):
+        super().__init__()
+
+        self.image_feat = image_feat
+        self.batch_size = image_feat.shape[0]
+ 
+    def forward(self, image_feat, text_feat):
+        logits = image_feat @ text_feat.t() / self.temp
+        labels = torch.arange(self.batch_size, device=image_feat.device)
+        loss_i2t = F.cross_entropy(logits, labels)
+        loss_t2i = F.cross_entropy(logits.t(), labels)
+        cont_loss = (loss_i2t + loss_t2i) / 2
+
+
+        return cont_loss
+
+   
+
 class Criterion(nn.Module):
     def __init__(self, args):
         super(Criterion, self).__init__()
         self.loss_weight = [3, 1]
         self.MSELoss = torch.nn.MSELoss(reduction='none')
-    def forward(self, pred, gt, img_size=256):
+        self.contrastive_loss = ContrastiveLoss()
+
+    def forward(self, pred, gt, image_feat, exp_feat, img_size=256):
         """`
         :param pred:  (bs, 4)
         :param gt: (bs, 4)
@@ -28,8 +51,10 @@ class Criterion(nn.Module):
                                    self.box_cxcywh_to_xyxy(gt)))
 
         loss_giou = loss_giou.sum() / bs
-        loss = 5 * loss_bbox + loss_giou * 2
-        return loss, 5 * loss_bbox, loss_giou * 2
+        cont_loss = self.contrastive_loss(image_feat, exp_feat)
+        loss = 5 * loss_bbox + loss_giou * 2 + cont_loss
+        
+        return loss, 5 * loss_bbox, loss_giou * 2, cont_loss
 
 
     def box_loss(self, pred_box, gt_box, type='L2'):

@@ -16,6 +16,8 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
     losses_bbox = AverageMeter()
     losses_giou = AverageMeter()
 
+    cont_losses = AverageMeter()
+
     acc = AverageMeter()
     miou = AverageMeter()
 
@@ -39,8 +41,8 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
         norm_bbox[:, 3] = bbox[:, 3] - bbox[:, 1]    # h
 
         # forward
-        pred_box = model(image, word_id)  # [bs, C, H, W]
-        loss, loss_box, loss_giou = criterion(pred_box, norm_bbox, img_size=img_size)
+        image_feat, exp_feat, pred_box = model(image, word_id)  # [bs, C, H, W]
+        loss, loss_box, loss_giou, cont_loss = criterion(pred_box, norm_bbox, image_feat, exp_feat, img_size=img_size)
 
         optimizer.zero_grad()
         loss.backward()
@@ -54,6 +56,7 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
         losses.update(loss.item(), imgs.size(0))
         losses_bbox.update(loss_box.item(), imgs.size(0))
         losses_giou.update(loss_giou.item(), imgs.size(0))
+        cont_losses.update(cont_loss.item(), imgs.size(0))
 
         target_bbox = bbox
         iou = bbox_iou(pred_box, target_bbox.data.cpu(), x1y1x2y2=True)
@@ -74,13 +77,15 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
                         'Loss_giou {loss_giou.val:.4f} ({loss_giou.avg:.4f})\t' \
                         'Accu {acc.val:.4f} ({acc.avg:.4f})\t' \
                         'Mean_iu {miou.val:.4f} ({miou.avg:.4f})\t' \
+                        'Contrastive_Loss {cont_loss.avg:.4f}\t' \
                 .format(epoch+1, batch_idx+1, len(train_loader),
                         batch_time=batch_time,
                         loss=losses,
                         loss_box=losses_bbox,
                         loss_giou=losses_giou,
                         acc=acc,
-                        miou=miou)
+                        miou=miou,
+                        cont_loss=cont_losses)
 
             print(print_str)
             logging.info(print_str)
@@ -112,7 +117,7 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
         norm_bbox[:, 3] = bbox[:, 3] - bbox[:, 1]    # h
 
         with torch.no_grad():
-            pred_box = model(image, word_id)  # [bs, C, H, W]
+            _, _, pred_box = model(image, word_id)  # [bs, C, H, W]
 
         pred_bbox = pred_box.detach().cpu()
         pred_bbox = pred_bbox * img_size
