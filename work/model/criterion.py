@@ -9,17 +9,26 @@ import math
 
 
 class ContrastiveLoss(nn.Module):
-    def __init__(self, image_feat, text_feat):
+    def __init__(self):
         super().__init__()
+        self.temp = nn.Parameter(torch.ones([]) * 0.07)
 
-        self.image_feat = image_feat
-        self.batch_size = image_feat.shape[0]
+        
  
     def forward(self, image_feat, text_feat):
-        logits = image_feat @ text_feat.t() / self.temp
-        labels = torch.arange(self.batch_size, device=image_feat.device)
-        loss_i2t = F.cross_entropy(logits, labels)
-        loss_t2i = F.cross_entropy(logits.t(), labels)
+        batch_size = image_feat.shape[0]
+        image_feat = image_feat.reshape(image_feat.shape[0], image_feat.shape[1], image_feat.shape[2] * image_feat.shape[3])
+        logits_all =[]
+        for b in range(batch_size):
+            logits = image_feat[b,:,:] @ text_feat[b,:,:].t() / self.temp
+            logits_all.append(logits)
+            
+        logits_all = torch.stack(logits_all)
+        labels = torch.arange(batch_size, device=image_feat.device)
+        print("labels: ", labels.shape)
+        print("logits: ",logits_all.shape)
+        loss_i2t = F.cross_entropy(logits_all, labels)
+        loss_t2i = F.cross_entropy(logits_all.t(), labels)
         cont_loss = (loss_i2t + loss_t2i) / 2
 
 

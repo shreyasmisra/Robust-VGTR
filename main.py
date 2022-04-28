@@ -26,7 +26,7 @@ def getargs():
     parser.add_argument('--num_exp_tokens', default=4, type=int,
                         help='num of expression tokens of exp feature')
     parser.add_argument('--rnn_layers', default=2, type=int, help='num of lstm layers')
-    parser.add_argument('--lr', default=1e-4, type=float, help='learning rate')
+    parser.add_argument('--lr', default=1e-4*0.5, type=float, help='learning rate')
     parser.add_argument('--lr_backbone', default=1e-5, type=float, help='learning rate')
     parser.add_argument('--hidden_dim', default=256, type=int,
                         help="Size of the embeddings (dimension of the transformer)")  # d_model
@@ -58,7 +58,7 @@ def getargs():
                         help="Dropout applied in the transformer")
     parser.add_argument('--nheads', default=8, type=int,
                         help="Number of attention heads inside the transformer's attentions")
-    parser.add_argument('--batch_size', default=96, type=int)
+    parser.add_argument('--batch_size', default=int(96*0.5), type=int)
     parser.add_argument('--weight_decay', default=1e-5, type=float)
     parser.add_argument('--clip_max_norm', default=40, type=float,
                         help='gradient clipping max norm')
