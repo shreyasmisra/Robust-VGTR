@@ -90,7 +90,7 @@ def getargs():
                         help='pretrained cnn weights')
     parser.add_argument('--data_perc', default='0.3', type=str,
                         help='percentage of data to be used')
-    parser.add_argument('--log_plot', default=False, type=bool, default=False,
+    parser.add_argument('--log_plot', default=False, type=bool,
                         help='to plot logs using wandb')
     args = parser.parse_args()
 
