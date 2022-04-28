@@ -13,26 +13,35 @@ class ContrastiveLoss(nn.Module):
         super().__init__()
         self.temp = nn.Parameter(torch.ones([]) * 0.07)
 
-        
  
     def forward(self, image_feat, text_feat):
         batch_size = image_feat.shape[0]
-        image_feat = image_feat.reshape(image_feat.shape[0], image_feat.shape[1], image_feat.shape[2] * image_feat.shape[3])
-        logits_all =[]
-        for b in range(batch_size):
-            logits = image_feat[b,:,:] @ text_feat[b,:,:].t() / self.temp
-            logits_all.append(logits)
+        tmp = torch.ones(batch_size)
+        # image_feat = image_feat.reshape(image_feat.shape[0], image_feat.shape[1], image_feat.shape[2] * image_feat.shape[3])
+        for i in range(image_feat.shape[2]):
+            a = image_feat[:,:,i].unsqueeze(2)
+            b = text_feat[:,i,:].unsqueeze(2)
+            c = F.cosine_similarity(a, b, dim=2)#.unsqueeze(1)
+            d = -F.log_softmax(c, dim=-1)
+            e = d.mean(dim=1)
+            loss = torch.add(tmp, e)
+        loss = loss / image_feat.shape[2]
+        loss = torch.mean(loss)
+        # logits_all =[]
+        # for b in range(batch_size):
+        #     logits = image_feat[b,:,:] @ text_feat[b,:,:].t() / self.temp
+        #     logits_all.append(logits)
             
-        logits_all = torch.stack(logits_all)
-        labels = torch.arange(batch_size, device=image_feat.device)
-        print("labels: ", labels.shape)
-        print("logits: ",logits_all.shape)
-        loss_i2t = F.cross_entropy(logits_all, labels)
-        loss_t2i = F.cross_entropy(logits_all.t(), labels)
-        cont_loss = (loss_i2t + loss_t2i) / 2
+        # logits_all = torch.stack(logits_all)
+        # labels = torch.arange(batch_size, device=image_feat.device)
+        # print("labels: ", labels.shape)
+        # print("logits: ",logits_all.shape)
+        # loss_i2t = F.cross_entropy(logits_all, labels) # just do this for now
+        # # loss_t2i = F.cross_entropy(logits_all.t(), labels)
+        # cont_loss = (loss_i2t + loss_t2i) / 2
 
 
-        return cont_loss
+        return loss
 
    
 

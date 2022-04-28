@@ -28,6 +28,9 @@ class GroundingModel(nn.Module):
         self.pooled_feats_linear = nn.Linear(2048, 256) # make part of args
         self.exp_feats_linear = nn.Linear(1024, 256)
 
+        self.conv = nn.Conv2d(2048, 256, kernel_size=3, padding=1)
+        self.pool = nn.AdaptiveAvgPool2d((2, 2))
+
     def forward(self, img, expression_word_id):
 
         img_feature, pooled_features = self.visual_encoder(img) #img_feature = (48, 2048, 16, 16)
@@ -48,5 +51,10 @@ class GroundingModel(nn.Module):
         embed2 = torch.cat([embed[:, i] for i in range(self.num_exp_tokens)], dim=-1)
 
         pred = self.prediction_head(embed2).sigmoid()
+
+        img_feature = self.pool(self.conv(img_feature)).flatten(2) # 48, 256, 4
+        exp_feature = exp_feature#.transpose(1, 2) # 48, 4, 256
+
+        # F.cosine_similarity(dim=2) # 48, 256
 
         return img_feature, exp_feature, pred
