@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from email.policy import default
 import logging
 import argparse
 import matplotlib as mpl
@@ -15,6 +16,9 @@ from work.model.grounding_model import GroundingModel
 from work.engine import train_epoch, validate_epoch, test_epoch
 from work.data.get_dataloader import get_train_loader, get_val_loader, get_test_loader
 import warnings
+
+import wandb
+
 mpl.use('Agg')
 warnings.filterwarnings('ignore')
 
@@ -86,7 +90,14 @@ def getargs():
                         help='pretrained cnn weights')
     parser.add_argument('--data_perc', default='0.3', type=str,
                         help='percentage of data to be used')
+    parser.add_argument('--log_plot', default=False, type=bool, default=False,
+                        help='to plot logs using wandb')
     args = parser.parse_args()
+
+    if args.log_plot == True:
+        #Please pip install wandb if an error shows up
+        wandb.init(project="visual_grounding", reinit=True)
+
 
     # refcoco/refcoco+
     args.split = 'testA' if args.dataset == 'refcoco' or args.dataset == 'refcoco+' else 'test'
@@ -180,6 +191,7 @@ def train(args):
                         filename=args.savename)
 
     print(f'Best Acc: {best_accu}.')
+    
 
 
 def test(args):
