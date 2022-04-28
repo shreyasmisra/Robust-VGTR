@@ -16,7 +16,7 @@ class ContrastiveLoss(nn.Module):
  
     def forward(self, image_feat, text_feat):
         batch_size = image_feat.shape[0]
-        tmp = torch.ones(batch_size)
+        tmp = torch.ones(batch_size).cuda()
         # image_feat = image_feat.reshape(image_feat.shape[0], image_feat.shape[1], image_feat.shape[2] * image_feat.shape[3])
         for i in range(image_feat.shape[2]):
             a = image_feat[:,:,i].unsqueeze(2)

@@ -57,9 +57,9 @@ class VGEncoder(nn.Module):
 
         src = img_feature.flatten(2).permute(2, 0, 1)  # (hw, bs, d)
         pos_embed = pos_feature.flatten(2).permute(2, 0, 1)
-        print('encoder img', src.shape)
-        print('pos embed', pos_embed.shape)
-        print('enc exp', expression_feature.shape)
+#        print('encoder img', src.shape)
+#        print('pos embed', pos_embed.shape)
+#        print('enc exp', expression_feature.shape)
 
         out, expf = self.encoder(src, expression_feature, pos=pos_embed, exp_pos_feature=exp_pos_feature)
         out = out.transpose(0, 1)
