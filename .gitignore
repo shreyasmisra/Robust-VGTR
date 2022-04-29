@@ -5,3 +5,4 @@ work/model/__pycache__/
 work/model/backbone/__pycache__/
 work/model/vgtr/__pycache__/
 work/utils/__pycache__/
+wandb/
