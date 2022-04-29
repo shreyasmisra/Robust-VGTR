@@ -5,6 +5,7 @@ import logging
 import numpy as np
 import cv2
 import torch
+import matplotlib.pyplot as plt
 from torch.autograd import Variable
 from torch.utils.tensorboard import SummaryWriter
 from .utils.utils import AverageMeter, xywh2xyxy, bbox_iou
@@ -226,8 +227,8 @@ def test_epoch(args, test_loader, model, img_size=512):
             bottom_tgt =  int(target_bbox_save[3])
             cv2.rectangle(img_save, (left_pred, top_pred), (right_pred, bottom_pred), (0,255,0), 3) # green 
             cv2.rectangle(img_save, (left_tgt, top_tgt), (right_tgt, bottom_tgt), (0,0,255), 3) # red
-             
-            cv2.imwrite(SAVE_PATH_IMG, img_save)
+            
+            plt.imsave(SAVE_PATH_IMG, img_save)
             with open(SAVE_PATH_PHRASE, 'a') as f:
                 f.write('[' + str(save_count) + ']' + '\t' + phrase_save + '\n')
                                 

@@ -95,8 +95,8 @@ def getargs():
     # refcoco/refcoco+
     args.split = 'testA' if args.dataset == 'refcoco' or args.dataset == 'refcoco+' else 'test'
     # refcocog
-    args.split = 'val' if args.dataset == 'refcocog' else 'test'
-
+    #args.split = 'val' if args.dataset == 'refcocog' else 'test'
+    
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
     cudnn.benchmark = False

@@ -46,6 +46,7 @@ def get_val_loader(args):
 def get_test_loader(args, split):
 
     if args.dataset == 'refcoco' or args.dataset == 'refcoco+':
+        print(args.split, split)
         assert split == 'testA' or split == 'testB'
     elif args.dataset == 'refcocog':
         assert split == 'val'
