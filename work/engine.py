@@ -3,8 +3,10 @@
 import time
 import logging
 import numpy as np
+import cv2
 import torch
 from torch.autograd import Variable
+from torch.utils.tensorboard import SummaryWriter
 from .utils.utils import AverageMeter, xywh2xyxy, bbox_iou
 
 
@@ -22,7 +24,7 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
     model.train()
     end = time.time()
 
-    for batch_idx, (imgs, word_id, word_mask, bbox) in enumerate(train_loader):
+    for batch_idx, (imgs, word_id, word_mask, bbox, phrase, ret_img) in enumerate(train_loader):
         imgs = imgs.cuda()
         word_id = word_id.cuda()
         bbox = bbox.cuda()
@@ -97,7 +99,7 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
     model.eval()
     end = time.time()
 
-    for batch_idx, (imgs, word_id, word_mask, bbox) in enumerate(val_loader):
+    for batch_idx, (imgs, word_id, word_mask, bbox, phrase, ret_img) in enumerate(val_loader):
         imgs = imgs.cuda()
         word_id = word_id.cuda()
         bbox = bbox.cuda()
@@ -120,11 +122,13 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
         pred_bbox = pred_bbox * img_size
         pred_bbox = xywh2xyxy(pred_bbox)
 
+        
         # constrain
         pred_bbox[pred_bbox < 0.0] = 0.0
         pred_bbox[pred_bbox > img_size-1] = img_size-1
 
         target_bbox = bbox
+
         # metrics
         iou = bbox_iou(pred_bbox, target_bbox.data.cpu(), x1y1x2y2=True)
         # accu = np.sum(np.array((iou.data.cpu().numpy() > 0.5), dtype=float)) / args.batch_size
@@ -152,13 +156,15 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
 
     return acc.avg, miou.avg
 
-def test_epoch(test_loader, model, img_size=512):
+def test_epoch(args, test_loader, model, img_size=512):
 
     acc = AverageMeter()
     miou = AverageMeter()
     model.eval()
+    
+    save_count = 0
 
-    for batch_idx, (imgs, word_id, word_mask, bbox) in enumerate(test_loader):
+    for batch_idx, (imgs, word_id, word_mask, bbox, phrase, ret_img) in enumerate(test_loader):
         imgs = imgs.cuda()
         word_id = word_id.cuda()
         bbox = bbox.cuda()
@@ -192,5 +198,42 @@ def test_epoch(test_loader, model, img_size=512):
 
         acc.update(accu, imgs.size(0))
         miou.update(torch.mean(iou).item(), imgs.size(0))
+        
+        if args.save_data:
+            # save the output
+            #print(ret_img.shape)
+            rand_idx = np.random.randint(0, high=imgs.shape[0], size=1)[0]
+            img_save = ret_img[rand_idx].detach().cpu().numpy()
+            img_save = np.ascontiguousarray(img_save, dtype=np.uint8)
+            pred_bbox_save = pred_bbox[rand_idx].clone().detach().cpu().numpy()
+            target_bbox_save = target_bbox[rand_idx].clone().detach().cpu().numpy()
+            #print(rand_idx, phrase)
+            phrase_save = phrase[rand_idx] 
+            
+            SAVE_PATH_IMG = args.save_data + "/imgs/" + str(save_count) + '.png'
+            SAVE_PATH_PHRASE = args.save_data + "/phrases.txt"
+            
+            # draw bbox on image
+            #print(img_save.shape)
+            left_pred = int(pred_bbox_save[0])
+            top_pred = int(pred_bbox_save[1])
+            right_pred = int(pred_bbox_save[2])
+            bottom_pred = int(pred_bbox_save[3])
+            
+            left_tgt = int(target_bbox_save[0])
+            top_tgt = int(target_bbox_save[1])
+            right_tgt = int(target_bbox_save[2])
+            bottom_tgt =  int(target_bbox_save[3])
+            cv2.rectangle(img_save, (left_pred, top_pred), (right_pred, bottom_pred), (0,255,0), 3) # green 
+            cv2.rectangle(img_save, (left_tgt, top_tgt), (right_tgt, bottom_tgt), (0,0,255), 3) # red
+             
+            cv2.imwrite(SAVE_PATH_IMG, img_save)
+            with open(SAVE_PATH_PHRASE, 'a') as f:
+                f.write('[' + str(save_count) + ']' + '\t' + phrase_save + '\n')
+                                
+#                writer.add_image("img_" + str(save_count), img_save)
+#                writer.add_text("query_" + str(save_count) , phrase)
+                
+            save_count += 1
 
     print(f"Test Result:  Acc {acc.avg}, MIoU {miou.avg}.")

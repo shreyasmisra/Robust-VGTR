@@ -9,6 +9,8 @@ import torch.optim
 import torch.utils.data.distributed
 # import torch.backends.cudnn as cudnn
 
+from torch.utils.tensorboard import SummaryWriter
+
 from work.utils.utils import *
 from work.model.criterion import Criterion
 from work.model.grounding_model import GroundingModel
@@ -86,6 +88,8 @@ def getargs():
                         help='pretrained cnn weights')
     parser.add_argument('--data_perc', default='0.3', type=str,
                         help='percentage of data to be used')
+    parser.add_argument('--save_data', default='', type=str,
+                        help='save path for images and queries')
     args = parser.parse_args()
 
     # refcoco/refcoco+
@@ -104,6 +108,9 @@ def getargs():
 def train(args):
 
     # log
+    #if args.save_data:
+    #    writer = SummaryWriter(args.save_data + '/runs/')
+    
     if args.savename == 'default':
         args.savename = f'model_{args.dataset}_batch_{args.batch_size}'
 
@@ -209,7 +216,7 @@ def test(args):
         logging.info("=> no pretrained file found at '{}'".format(args.pretrain))
 
     model.eval()
-    test_epoch(test_loader, model, args.size)
+    test_epoch(args, test_loader, model, args.size)
 
 
 if __name__ == "__main__":

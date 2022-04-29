@@ -135,7 +135,7 @@ class UnifiedDataset(data.Dataset):
 
         img_path = osp.join(self.im_dir, img_file)
         img = cv2.imread(img_path)
-
+        
         if img.shape[-1] > 1:
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         else:
@@ -144,6 +144,7 @@ class UnifiedDataset(data.Dataset):
         phrase = phrase.lower()
 
         img, phrase, bbox = self.trans(img, phrase, bbox, self.imsize)
+        ret_img = img
 
         if self.transform is not None:
             img = self.transform(img)
@@ -152,4 +153,4 @@ class UnifiedDataset(data.Dataset):
         word_id = self.corpus.tokenize(phrase, self.query_len)
         word_mask = np.array(word_id > 0, dtype=int)
 
-        return img, np.array(word_id, dtype=int), np.array(word_mask, dtype=int), np.array(bbox, dtype=np.float32)
+        return img, np.array(word_id, dtype=int), np.array(word_mask, dtype=int), np.array(bbox, dtype=np.float32), phrase, ret_img
