@@ -1,0 +1,162 @@
+2022-04-29 21:50:42,114 INFO    MainThread:18665 [internal.py:wandb_internal():90] W&B internal server running at pid: 18665, started at: 2022-04-29 21:50:42.114619
+2022-04-29 21:50:42,116 INFO    WriterThread:18665 [datastore.py:open_for_write():75] open: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/run-13xarszq.wandb
+2022-04-29 21:50:42,118 DEBUG   SenderThread:18665 [sender.py:send():232] send: header
+2022-04-29 21:50:42,118 DEBUG   SenderThread:18665 [sender.py:send():232] send: run
+2022-04-29 21:50:42,247 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: check_version
+2022-04-29 21:50:42,250 INFO    SenderThread:18665 [dir_watcher.py:__init__():166] watching files in: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files
+2022-04-29 21:50:42,250 INFO    SenderThread:18665 [sender.py:_start_run_threads():811] run started: 13xarszq with start time 1651269041
+2022-04-29 21:50:42,250 DEBUG   SenderThread:18665 [sender.py:send():232] send: summary
+2022-04-29 21:50:42,250 INFO    SenderThread:18665 [sender.py:_save_file():946] saving file wandb-summary.json with policy end
+2022-04-29 21:50:42,251 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: check_version
+2022-04-29 21:50:42,319 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: run_start
+2022-04-29 21:50:42,322 DEBUG   HandlerThread:18665 [meta.py:__init__():35] meta init
+2022-04-29 21:50:42,322 DEBUG   HandlerThread:18665 [meta.py:__init__():49] meta init done
+2022-04-29 21:50:42,322 DEBUG   HandlerThread:18665 [meta.py:probe():209] probe
+2022-04-29 21:50:42,328 DEBUG   HandlerThread:18665 [meta.py:_setup_git():199] setup git
+2022-04-29 21:50:42,340 DEBUG   HandlerThread:18665 [meta.py:_setup_git():206] setup git done
+2022-04-29 21:50:42,340 DEBUG   HandlerThread:18665 [meta.py:_save_pip():53] save pip
+2022-04-29 21:50:42,340 DEBUG   HandlerThread:18665 [meta.py:_save_pip():67] save pip done
+2022-04-29 21:50:42,340 DEBUG   HandlerThread:18665 [meta.py:_save_conda():74] save conda
+2022-04-29 21:50:43,252 INFO    Thread-7  :18665 [dir_watcher.py:_on_file_created():213] file/dir created: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/conda-environment.yaml
+2022-04-29 21:50:43,252 INFO    Thread-7  :18665 [dir_watcher.py:_on_file_created():213] file/dir created: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/wandb-summary.json
+2022-04-29 21:50:43,252 INFO    Thread-7  :18665 [dir_watcher.py:_on_file_created():213] file/dir created: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/requirements.txt
+2022-04-29 21:50:44,253 INFO    Thread-7  :18665 [dir_watcher.py:_on_file_modified():226] file/dir modified: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/conda-environment.yaml
+2022-04-29 21:50:44,345 DEBUG   HandlerThread:18665 [meta.py:_save_conda():84] save conda done
+2022-04-29 21:50:44,345 DEBUG   HandlerThread:18665 [meta.py:probe():247] probe done
+2022-04-29 21:50:44,381 DEBUG   SenderThread:18665 [sender.py:send():232] send: files
+2022-04-29 21:50:44,381 INFO    SenderThread:18665 [sender.py:_save_file():946] saving file wandb-metadata.json with policy now
+2022-04-29 21:50:44,385 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-29 21:50:44,386 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: stop_status
+2022-04-29 21:50:44,477 DEBUG   SenderThread:18665 [sender.py:send():232] send: telemetry
+2022-04-29 21:50:44,774 INFO    Thread-11 :18665 [upload_job.py:push():137] Uploaded file /tmp/tmpwoc1ar87wandb/385pnx3d-wandb-metadata.json
+2022-04-29 21:50:45,253 INFO    Thread-7  :18665 [dir_watcher.py:_on_file_created():213] file/dir created: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/output.log
+2022-04-29 21:50:45,254 INFO    Thread-7  :18665 [dir_watcher.py:_on_file_created():213] file/dir created: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/wandb-metadata.json
+2022-04-29 21:50:45,953 DEBUG   SenderThread:18665 [sender.py:send():232] send: telemetry
+2022-04-29 21:50:47,254 INFO    Thread-7  :18665 [dir_watcher.py:_on_file_modified():226] file/dir modified: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/output.log
+2022-04-29 21:50:48,026 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:48,026 DEBUG   SenderThread:18665 [sender.py:send():232] send: exit
+2022-04-29 21:50:48,027 INFO    SenderThread:18665 [sender.py:send_exit():368] handling exit code: 1
+2022-04-29 21:50:48,027 INFO    SenderThread:18665 [sender.py:send_exit():370] handling runtime: 5
+2022-04-29 21:50:48,027 INFO    SenderThread:18665 [sender.py:_save_file():946] saving file wandb-summary.json with policy end
+2022-04-29 21:50:48,027 INFO    SenderThread:18665 [sender.py:send_exit():376] send defer
+2022-04-29 21:50:48,027 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:48,028 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:48,028 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 0
+2022-04-29 21:50:48,028 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:48,028 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 0
+2022-04-29 21:50:48,028 INFO    SenderThread:18665 [sender.py:transition_state():389] send defer: 1
+2022-04-29 21:50:48,028 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:48,028 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 1
+2022-04-29 21:50:48,113 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:48,113 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 1
+2022-04-29 21:50:48,113 INFO    SenderThread:18665 [sender.py:transition_state():389] send defer: 2
+2022-04-29 21:50:48,113 DEBUG   SenderThread:18665 [sender.py:send():232] send: stats
+2022-04-29 21:50:48,114 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:48,114 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 2
+2022-04-29 21:50:48,114 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:48,114 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 2
+2022-04-29 21:50:48,114 INFO    SenderThread:18665 [sender.py:transition_state():389] send defer: 3
+2022-04-29 21:50:48,114 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:48,114 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 3
+2022-04-29 21:50:48,114 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:48,114 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 3
+2022-04-29 21:50:48,114 INFO    SenderThread:18665 [sender.py:transition_state():389] send defer: 4
+2022-04-29 21:50:48,114 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:48,114 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 4
+2022-04-29 21:50:48,115 DEBUG   SenderThread:18665 [sender.py:send():232] send: summary
+2022-04-29 21:50:48,115 INFO    SenderThread:18665 [sender.py:_save_file():946] saving file wandb-summary.json with policy end
+2022-04-29 21:50:48,115 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:48,115 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 4
+2022-04-29 21:50:48,115 INFO    SenderThread:18665 [sender.py:transition_state():389] send defer: 5
+2022-04-29 21:50:48,115 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:48,115 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 5
+2022-04-29 21:50:48,115 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:48,115 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 5
+2022-04-29 21:50:48,128 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:48,223 INFO    SenderThread:18665 [sender.py:transition_state():389] send defer: 6
+2022-04-29 21:50:48,223 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:48,223 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:48,223 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 6
+2022-04-29 21:50:48,223 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:48,223 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 6
+2022-04-29 21:50:48,223 INFO    SenderThread:18665 [dir_watcher.py:finish():279] shutting down directory watcher
+2022-04-29 21:50:48,254 INFO    Thread-7  :18665 [dir_watcher.py:_on_file_modified():226] file/dir modified: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/config.yaml
+2022-04-29 21:50:48,254 INFO    SenderThread:18665 [dir_watcher.py:_on_file_modified():226] file/dir modified: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/wandb-summary.json
+2022-04-29 21:50:48,255 INFO    SenderThread:18665 [dir_watcher.py:_on_file_modified():226] file/dir modified: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/output.log
+2022-04-29 21:50:48,255 INFO    SenderThread:18665 [dir_watcher.py:finish():309] scan: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files
+2022-04-29 21:50:48,255 INFO    SenderThread:18665 [dir_watcher.py:finish():323] scan save: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/wandb-metadata.json wandb-metadata.json
+2022-04-29 21:50:48,255 INFO    SenderThread:18665 [dir_watcher.py:finish():323] scan save: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/config.yaml config.yaml
+2022-04-29 21:50:48,255 INFO    SenderThread:18665 [dir_watcher.py:finish():323] scan save: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/wandb-summary.json wandb-summary.json
+2022-04-29 21:50:48,255 INFO    SenderThread:18665 [dir_watcher.py:finish():323] scan save: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/output.log output.log
+2022-04-29 21:50:48,255 INFO    SenderThread:18665 [dir_watcher.py:finish():323] scan save: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/requirements.txt requirements.txt
+2022-04-29 21:50:48,257 INFO    SenderThread:18665 [dir_watcher.py:finish():323] scan save: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/conda-environment.yaml conda-environment.yaml
+2022-04-29 21:50:48,258 INFO    SenderThread:18665 [sender.py:transition_state():389] send defer: 7
+2022-04-29 21:50:48,266 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:48,267 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 7
+2022-04-29 21:50:48,267 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:48,267 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 7
+2022-04-29 21:50:48,267 INFO    SenderThread:18665 [file_pusher.py:finish():145] shutting down file pusher
+2022-04-29 21:50:48,324 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:48,324 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:48,425 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:48,425 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:48,526 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:48,526 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:48,617 INFO    Thread-15 :18665 [upload_job.py:push():137] Uploaded file /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/requirements.txt
+2022-04-29 21:50:48,627 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:48,627 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:48,663 INFO    Thread-12 :18665 [upload_job.py:push():137] Uploaded file /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/config.yaml
+2022-04-29 21:50:48,670 INFO    Thread-16 :18665 [upload_job.py:push():137] Uploaded file /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/conda-environment.yaml
+2022-04-29 21:50:48,705 INFO    Thread-14 :18665 [upload_job.py:push():137] Uploaded file /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/output.log
+2022-04-29 21:50:48,728 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:48,728 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:48,829 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:48,829 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:48,929 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:48,930 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:49,030 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:49,030 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:49,131 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:49,131 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:49,232 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:49,233 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:49,334 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:49,334 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:49,435 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:49,435 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:49,517 INFO    Thread-13 :18665 [upload_job.py:push():137] Uploaded file /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/files/wandb-summary.json
+2022-04-29 21:50:49,536 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:49,536 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:49,636 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:49,637 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:49,717 INFO    Thread-6  :18665 [sender.py:transition_state():389] send defer: 8
+2022-04-29 21:50:49,717 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:49,717 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 8
+2022-04-29 21:50:49,717 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:49,718 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 8
+2022-04-29 21:50:49,737 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:49,787 INFO    SenderThread:18665 [sender.py:transition_state():389] send defer: 9
+2022-04-29 21:50:49,787 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:49,788 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:49,788 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 9
+2022-04-29 21:50:49,788 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:49,788 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 9
+2022-04-29 21:50:49,788 INFO    SenderThread:18665 [sender.py:transition_state():389] send defer: 10
+2022-04-29 21:50:49,788 DEBUG   SenderThread:18665 [sender.py:send():232] send: final
+2022-04-29 21:50:49,789 DEBUG   SenderThread:18665 [sender.py:send():232] send: footer
+2022-04-29 21:50:49,789 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: defer
+2022-04-29 21:50:49,789 INFO    HandlerThread:18665 [handler.py:handle_request_defer():164] handle defer: 10
+2022-04-29 21:50:49,789 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: defer
+2022-04-29 21:50:49,789 INFO    SenderThread:18665 [sender.py:send_request_defer():385] handle sender defer: 10
+2022-04-29 21:50:49,888 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-29 21:50:49,889 DEBUG   SenderThread:18665 [sender.py:send_request():246] send_request: poll_exit
+2022-04-29 21:50:49,889 INFO    SenderThread:18665 [file_pusher.py:join():150] waiting for file pusher
+2022-04-29 21:50:50,160 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: sampled_history
+2022-04-29 21:50:50,161 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: get_summary
+2022-04-29 21:50:50,161 DEBUG   HandlerThread:18665 [handler.py:handle_request():141] handle_request: shutdown
+2022-04-29 21:50:50,161 INFO    HandlerThread:18665 [handler.py:finish():806] shutting down handler
+2022-04-29 21:50:50,789 INFO    WriterThread:18665 [datastore.py:close():279] close: /home/ubuntu/VGTR/wandb/run-20220429_215041-13xarszq/run-13xarszq.wandb
+2022-04-29 21:50:51,059 INFO    SenderThread:18665 [sender.py:finish():1106] shutting down sender
+2022-04-29 21:50:51,059 INFO    SenderThread:18665 [file_pusher.py:finish():145] shutting down file pusher
+2022-04-29 21:50:51,059 INFO    SenderThread:18665 [file_pusher.py:join():150] waiting for file pusher
+2022-04-29 21:50:51,126 INFO    MainThread:18665 [internal.py:handle_exit():80] Internal process exited

@@ -1,0 +1,28 @@
+{
+    "os": "Linux-5.4.0-1072-aws-x86_64-with-glibc2.27",
+    "python": "3.9.12",
+    "heartbeatAt": "2022-04-29T21:50:42.322726",
+    "startedAt": "2022-04-29T21:50:41.641664",
+    "docker": null,
+    "gpu": "Tesla T4",
+    "gpu_count": 1,
+    "cpu_count": 8,
+    "cuda": "10.0.130",
+    "args": [
+        "--gpu",
+        "0",
+        "--log_plot"
+    ],
+    "state": "running",
+    "program": "/home/ubuntu/VGTR/main.py",
+    "codePath": "main.py",
+    "git": {
+        "remote": "https://github.com/Jigar1201/VGTR.git",
+        "commit": "836c3fbd23d5164376bc6431ff01cbca6180d1bf"
+    },
+    "email": null,
+    "root": "/home/ubuntu/VGTR",
+    "host": "ip-172-31-36-26",
+    "username": "ubuntu",
+    "executable": "/home/ubuntu/anaconda3/envs/project/bin/python"
+}

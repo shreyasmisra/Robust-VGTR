@@ -1,0 +1,126 @@
+
+Starting Training....
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+In Forward of Neck
+len(feats) =  4
+len(f):  torch.Size([48, 2048, 16, 16])
+len(f):  torch.Size([48, 1024, 32, 32])
+len(f):  torch.Size([48, 512, 64, 64])
+len(f):  torch.Size([48, 256, 128, 128])
+Traceback (most recent call last):
+  File "/home/ubuntu/VGTR/main.py", line 235, in <module>
+    train(args)
+  File "/home/ubuntu/VGTR/main.py", line 177, in train
+    train_epoch(args, train_loader, model, optimizer, epoch, criterion, args.size)
+  File "/home/ubuntu/VGTR/work/engine.py", line 51, in train_epoch
+    optimizer.step()
+  File "/home/ubuntu/anaconda3/envs/project/lib/python3.9/site-packages/torch/optim/optimizer.py", line 88, in wrapper
+    return func(*args, **kwargs)
+  File "/home/ubuntu/anaconda3/envs/project/lib/python3.9/site-packages/torch/autograd/grad_mode.py", line 27, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/ubuntu/anaconda3/envs/project/lib/python3.9/site-packages/torch/optim/adamw.py", line 145, in step
+    F.adamw(params_with_grad,
+  File "/home/ubuntu/anaconda3/envs/project/lib/python3.9/site-packages/torch/optim/_functional.py", line 151, in adamw
+    denom = (exp_avg_sq.sqrt() / math.sqrt(bias_correction2)).add_(eps)
+KeyboardInterrupt
