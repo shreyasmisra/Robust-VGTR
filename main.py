@@ -37,7 +37,7 @@ def getargs():
     parser.add_argument('--nb_epoch', default=120, type=int,
                         help='training epoch')
     parser.add_argument('--backbone', default='resnet50', type=str,
-                        help="Name of the convolutional backbone to use")
+                        help="Name of the convolutional backbone to use") # using convnext
     parser.add_argument('--dilation', action='store_true',
                         help="If true, we replace stride with dilation in the last CNN convolutional block")
     parser.add_argument('--stride', action='store_true',
