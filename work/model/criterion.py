@@ -57,7 +57,7 @@ class ContrastiveLoss(nn.Module):
 
         # cont_loss = (loss_i2t + loss_t2i) / 2
         
-        LARGE_NUM = 1e9
+        # LARGE_NUM = 1e9
 
         # Get (normalized) hidden1 and hidden2.
         image_feat = image_feat.flatten(1)
@@ -72,7 +72,7 @@ class ContrastiveLoss(nn.Module):
         hidden2_large = hidden2
 
         labels = F.one_hot(torch.arange(start=0, end=batch_size, dtype=torch.int64), num_classes=batch_size).float()
-        labels = labels.to(self.device)
+        labels = labels.to("cuda")
         # masks = F.one_hot(torch.arange(start=0, end=batch_size, dtype=torch.int64), num_classes=batch_size)
         
         """
