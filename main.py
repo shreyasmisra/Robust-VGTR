@@ -166,8 +166,12 @@ def train(args):
     criterion = Criterion(args)
     best_accu = -float('Inf')
 
+    start = 0
+    if args.start_epoch:
+        start = args.start_epoch
+
     # train
-    for epoch in range(args.nb_epoch):
+    for epoch in range(start, args.nb_epoch):
         adjust_learning_rate(optimizer, epoch, optimizer.param_groups[0]['lr'])
         model.train()
         train_epoch(args, train_loader, model, optimizer, epoch, criterion, args.size)
