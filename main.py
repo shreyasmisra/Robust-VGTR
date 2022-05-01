@@ -29,7 +29,11 @@ def getargs():
                         help='num of expression tokens of exp feature')
     parser.add_argument('--rnn_layers', default=2, type=int, help='num of lstm layers')
     parser.add_argument('--lr', default=1e-4*0.5, type=float, help='learning rate')
+<<<<<<< HEAD
     parser.add_argument('--lr_backbone', default=1e-5*0.5, type=float, help='learning rate')
+=======
+    parser.add_argument('--lr_backbone', default=1e-5, type=float, help='learning rate')
+>>>>>>> 25fd0c973e7a01e6dc744daaecb4a4bee05b09fc
     parser.add_argument('--hidden_dim', default=256, type=int,
                         help="Size of the embeddings (dimension of the transformer)")  # d_model
     parser.add_argument('--size', default=512, type=int, help='image size')
@@ -39,7 +43,7 @@ def getargs():
     parser.add_argument('--nb_epoch', default=120, type=int,
                         help='training epoch')
     parser.add_argument('--backbone', default='resnet50', type=str,
-                        help="Name of the convolutional backbone to use")
+                        help="Name of the convolutional backbone to use") # using convnext
     parser.add_argument('--dilation', action='store_true',
                         help="If true, we replace stride with dilation in the last CNN convolutional block")
     parser.add_argument('--stride', action='store_true',
@@ -60,7 +64,11 @@ def getargs():
                         help="Dropout applied in the transformer")
     parser.add_argument('--nheads', default=8, type=int,
                         help="Number of attention heads inside the transformer's attentions")
+<<<<<<< HEAD
     parser.add_argument('--batch_size', default=48, type=int)
+=======
+    parser.add_argument('--batch_size', default=int(96*0.5), type=int)
+>>>>>>> 25fd0c973e7a01e6dc744daaecb4a4bee05b09fc
     parser.add_argument('--weight_decay', default=1e-5, type=float)
     parser.add_argument('--clip_max_norm', default=40, type=float,
                         help='gradient clipping max norm')
@@ -167,8 +175,13 @@ def train(args):
     best_accu = -float('Inf')
 
     start = 0
+<<<<<<< HEAD
     if args.start_epoch:
         start = args.start_epoch
+=======
+    if hasattr(args, 'start_epoch'):
+      start = args.start_epoch
+>>>>>>> 25fd0c973e7a01e6dc744daaecb4a4bee05b09fc
 
     # train
     for epoch in range(start, args.nb_epoch):

@@ -87,6 +87,9 @@ class VGEncoder(nn.Module):
 
         src = img_feature.flatten(2).permute(2, 0, 1)  # (hw, bs, d)
         pos_embed = pos_feature.flatten(2).permute(2, 0, 1)
+#        print('encoder img', src.shape)
+#        print('pos embed', pos_embed.shape)
+#        print('enc exp', expression_feature.shape)
 
         # src = img_feature.permute(1, 0, 2)
         # pos_embed = pos_feature

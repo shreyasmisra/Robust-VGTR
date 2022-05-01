@@ -1,9 +1,17 @@
 /store
+<<<<<<< HEAD
 /__pycache__
 .pyc
+=======
+>>>>>>> 25fd0c973e7a01e6dc744daaecb4a4bee05b09fc
 work/__pycache__/
 work/data/__pycache__/
 work/model/__pycache__/
 work/model/backbone/__pycache__/
 work/model/vgtr/__pycache__/
+<<<<<<< HEAD
 work/utils/__pycache__/
+=======
+work/utils/__pycache__/
+wandb/
+>>>>>>> 25fd0c973e7a01e6dc744daaecb4a4bee05b09fc

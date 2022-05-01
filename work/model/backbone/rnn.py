@@ -115,6 +115,11 @@ class TextualEncoder(nn.Module):
         sent = sent[:, :max_len]
         context, hidden, embedded = self.rnn(sent)  # [bs, maxL, d]
         sent_feature = [module(context, embedded, sent)[-1] for module in self.parser]
+        
+#        print('context', context.shape)
+#        print('embed', embedded.shape)
+#        print('rnn', torch.stack(sent_feature, dim=1).shape)
+        
         return torch.stack(sent_feature, dim=1)
 
 
