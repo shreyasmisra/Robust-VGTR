@@ -185,7 +185,7 @@ def test_epoch(args, test_loader, model, img_size=512):
         norm_bbox[:, 3] = bbox[:, 3] - bbox[:, 1]    # h
 
         with torch.no_grad():
-            pred_box = model(image, word_id)  # [bs, C, H, W]
+            _, _, pred_box = model(image, word_id)  # [bs, C, H, W]
 
         pred_bbox = pred_box.detach().cpu()
         pred_bbox = pred_bbox * img_size

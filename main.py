@@ -60,7 +60,7 @@ def getargs():
                         help="Dropout applied in the transformer")
     parser.add_argument('--nheads', default=8, type=int,
                         help="Number of attention heads inside the transformer's attentions")
-    parser.add_argument('--batch_size', default=45, type=int)
+    parser.add_argument('--batch_size', default=48, type=int)
     parser.add_argument('--weight_decay', default=1e-5, type=float)
     parser.add_argument('--clip_max_norm', default=40, type=float,
                         help='gradient clipping max norm')
