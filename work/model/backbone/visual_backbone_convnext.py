@@ -43,47 +43,57 @@ class FrozenBatchNorm2d(torch.nn.Module):
         bias = b - rm * scale
         return x * scale + bias
 
+class BackboneBase(nn.Module):
 
-class Backbone(nn.Module):
+    def __init__(self, backbone: nn.Module, train_backbone: bool, return_interm_layers: bool):
+        super().__init__()
+        # for name, parameter in backbone.named_parameters():
+            # if not train_backbone or 'layer2' not in name and 'layer3' not in name and 'layer4' not in name:
+            #     parameter.requires_grad_(False)
+        if return_interm_layers:
+            return_layers = return_layers = {"4":"0", "5": "1", "6": "2", "7": "3"}
+        else:
+            return_layers = {'features': "0"}
+        self.body = IntermediateLayerGetter(backbone.features, return_layers=return_layers)
+        # self.body =  nn.Sequential(*list(backbone.children())[:-1])
+
+    def forward(self, x):
+
+        torch.cuda.empty_cache()
+        out = self.body(x)
+        return_f = []
+        return_f.append(out['3'])
+        return_f.append(out['2']) # 
+        return_f.append(out['1']) # torch.Size([1, 112, 32, 32])
+        return_f.append(out['0']) # torch.Size([1, 80, 32, 32])
+
+        return return_f
+
+class Backbone(BackboneBase):
     def __init__(self, name: str,
                  train_backbone: bool,
                  return_interm_layers: bool,
                  dilation: bool,
                  pretrain_path: str):
-    
-        backbone_model = torchvision.models.convnext_small(replace_stride_with_dilation=[False, False, dilation],
-            pretrained=True, norm_layer=FrozenBatchNorm2d, stochastic_depth_prob=0.5)
         
-        self.num_channels = 768
-
-        return_layers = {"1": "0", "3": "1", "5": "2", "7": "3"}
-
-        self.body = body = IntermediateLayerGetter(backbone_model.features, return_layers=return_layers)
-    
-    def forward(self, x):
-        out = self.body(x)
-
-        return_feats = []
-        return_feats.append(out['3']) # torch.Size([1, 768, 16, 16])
-        return_feats.append(out['2']) # torch.Size([1, 384, 32, 32])
-        return_feats.append(out['1']) # torch.Size([1, 192, 64, 64])
-        return_feats.append(out['0']) # torch.Size([1, 96, 128, 128])
-
-        return return_feats
+        backbone_model = torchvision.models.efficientnet_b0(replace_stride_with_dilation=[False, False, dilation],
+            pretrained=True, norm_layer=FrozenBatchNorm2d, map_location='cpu')
+        super().__init__(backbone_model, train_backbone, return_interm_layers)
 
 
 class Neck(nn.Module):
 
-    def __init__(self, n_levels=4, channels=[768, 384, 192, 96], fusion_size=32, lat_channels=256, args=None):
+    def __init__(self, n_levels=4, channels=[320, 192, 112, 80], fusion_size=32, lat_channels=128, args=None):
         super().__init__()
-        self.n_levels = n_levels
+        self.n_levels = 4
         self.lat_conv = nn.ModuleList([nn.Conv2d(i, lat_channels,
                                                  kernel_size=(1, 1)) for i in channels])
         self.updown_conv = nn.ModuleList([nn.Conv2d(lat_channels, lat_channels,
                                                     kernel_size=(3, 3), stride=1, padding=1)
                                                 for _ in range(n_levels-1)])
         self.fusion_size = fusion_size
-        n = lat_channels * n_levels
+        n = lat_channels * self.n_levels
+        # print(n)
         stride = 2 if args.stride else 1
         self.post_conv = nn.Sequential(
             nn.Conv2d(n, 1024, kernel_size=(3, 3), padding=(1, 1), stride=(2, 2)),  # -> (64->32)
@@ -104,22 +114,14 @@ class Neck(nn.Module):
         _, _, H, W = feat2.size()
         return torch.nn.functional.interpolate(feat1, size=(H, W), mode='bilinear',
                                                align_corners=True) + feat2
-
-    def pool_features(self, feats, out_size = 4):
-        pooled_feats = []
-        pool = nn.AdaptiveAvgPool2d((out_size, out_size))
-        
-        for f in feats:
-            pooled_feats.append(pool(f))
-        
-        return pooled_feats    
     
     def forward(self, feats):
 
-        assert len(feats) == self.n_levels
-
+        # assert len(feats) == self.n_levels
+        torch.cuda.empty_cache()
         for i in range(self.n_levels): 
-            feats[i] = self.lat_conv[i](feats[i]) # get all feats to 256 channels
+            torch.cuda.empty_cache()
+            feats[i] = self.lat_conv[i](feats[i]) # get all feats to 128 channels
 
         Out = []
         out = feats[0]
@@ -134,12 +136,13 @@ class Neck(nn.Module):
                                                          mode='bilinear',
                                                          align_corners=True)
             Out.append(out_append)
+        # for i in Out:
+        #     print(i.shape)
         out = torch.cat(Out, dim=1)
+        print(out.shape)
         out = self.post_conv(out)
 
-        feats = self.pool_features(feats)
-
-        return out, feats
+        return out
 
 
 class VisualBackbone(nn.Module):
@@ -150,12 +153,13 @@ class VisualBackbone(nn.Module):
                             return_interm_layers=True,
                             dilation=args.dilation,
                             pretrain_path=args.cnn_path)
-        self.neck = Neck(4, [768, 384, 192, 96], args=args)
+        self.neck = Neck(4, [320, 192, 112, 80], args=args)
 
     def forward(self, img):
-        out, feats = self.neck(self.cnn(img))
+        out = self.neck(self.cnn(img))
+        # out = self.cnn(img)
 
-        return out, feats
+        return out
 
 def build_visual_backbone(args):
     return VisualBackbone(args)

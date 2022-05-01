@@ -80,11 +80,7 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
                         'Loss_giou {loss_giou.val:.4f} ({loss_giou.avg:.4f})\t' \
                         'Accu {acc.val:.4f} ({acc.avg:.4f})\t' \
                         'Mean_iu {miou.val:.4f} ({miou.avg:.4f})\t' \
-<<<<<<< HEAD
-                        'Lr {lr:.04f}\t' \
-=======
                         'Contrastive_Loss {cont_loss.avg:.4f}\t' \
->>>>>>> 25fd0c973e7a01e6dc744daaecb4a4bee05b09fc
                 .format(epoch+1, batch_idx+1, len(train_loader),
                         batch_time=batch_time,
                         loss=losses,
@@ -92,11 +88,7 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
                         loss_giou=losses_giou,
                         acc=acc,
                         miou=miou,
-<<<<<<< HEAD
-                        lr=float(optimizer.param_groups[0]['lr']))
-=======
                         cont_loss=cont_losses)
->>>>>>> 25fd0c973e7a01e6dc744daaecb4a4bee05b09fc
 
             print(print_str)
             logging.info(print_str)

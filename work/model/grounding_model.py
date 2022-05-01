@@ -32,7 +32,6 @@ class GroundingModel(nn.Module):
         self.pooled_feats_linear = nn.Linear(2048, 256) # make part of args
         self.exp_feats_linear = nn.Linear(1024, 256)
 
-<<<<<<< HEAD
         self.pos_encoder = PositionEmbeddingSine(args.hidden_dim//2, normalize=False)
         self.pos_encoder_1d = PositionEncoding1D(256)
         self.pointwise = nn.Conv2d(128, 256, kernel_size=1, stride=1)
@@ -40,21 +39,14 @@ class GroundingModel(nn.Module):
         self.early_attn = DotAttention(l_norm=False)
         self.cosine_attn = CosineAttention()
         self.co_attn = CoAttention()
-        
-    def forward(self, img, expression_word_id):
 
-        img_feature, pooled_features = self.visual_encoder(img) # pooled feats - B, 128, 4, 4
-        exp_feature = self.textual_encoder(expression_word_id) # B, 4, 256
-=======
         self.conv = nn.Conv2d(2048, 256, kernel_size=1, padding=0)
         self.conv_text = nn.Conv1d(4, 256, kernel_size=1, padding=0)
-        # self.pool = nn.AdaptiveAvgPool2d((2, 2))
 
     def forward(self, img, expression_word_id):
 
-        img_feature, pooled_features = self.visual_encoder(img) #img_feature = (48, 2048, 16, 16)
+        img_feature = self.visual_encoder(img) #img_feature = (48, 2048, 16, 16)
         exp_feature = self.textual_encoder(expression_word_id) #exp_feature = (48, 4, 256)
->>>>>>> 25fd0c973e7a01e6dc744daaecb4a4bee05b09fc
         
         # img_exp_feature = []
 
@@ -85,13 +77,14 @@ class GroundingModel(nn.Module):
         
         # embed = self.vgtr(img_feature, img_exp_feature, exp_feature, None, expression_word_id)
         embed = self.vgtr(img_feature, exp_feature, None, expression_word_id)
+        print(embed.shape)
         embed2 = torch.cat([embed[:, i] for i in range(self.num_exp_tokens)], dim=-1)
+        print(embed2.shape)
 
         pred = self.prediction_head(embed2).sigmoid()
 
-        img_feature = self.conv(img_feature).flatten(2) # 48, 256, 256
-        exp_feature = self.conv_text(exp_feature)#.transpose(1, 2) # 48, 256, 256
-
-        # F.cosine_similarity(dim=2) # 48, 256
+        # for contrastive loss
+        img_feature = self.conv(img_feature).flatten(2) 
+        exp_feature = self.conv_text(exp_feature)
 
         return img_feature, exp_feature, pred
