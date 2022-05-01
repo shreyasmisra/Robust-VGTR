@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+from transformers import BertModel
 
 class RNNEncoder(nn.Module):
 
@@ -99,6 +99,8 @@ class PhraseAttention(nn.Module):
 class TextualEncoder(nn.Module):
     def __init__(self, args):
         super().__init__()
+        self.bert_model = BertModel.from_pretrained("bert-base-uncased")
+        self.fc1 = nn.Linear(768,256)
         self.rnn = RNNEncoder(args.vocab_size, args.embedding_dim,
                       args.hidden_dim, args.rnn_hidden_dim,
                       bidirectional=True,
@@ -113,8 +115,13 @@ class TextualEncoder(nn.Module):
     def forward(self, sent):
         max_len = (sent != 0).sum(1).max().item()
         sent = sent[:, :max_len]
+        output = self.bert_model(sent)
+        output_vec = self.fc1(output.last_hidden_state)
+       
         context, hidden, embedded = self.rnn(sent)  # [bs, maxL, d]
-        sent_feature = [module(context, embedded, sent)[-1] for module in self.parser]
+        # sent_feature = [module(context, embedded, sent)[-1] for module in self.parser]
+        
+        sent_feature = [module(output_vec, output_vec, sent)[-1] for module in self.parser]
         return torch.stack(sent_feature, dim=1)
 
 

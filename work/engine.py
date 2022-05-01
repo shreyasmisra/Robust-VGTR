@@ -43,8 +43,7 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
         pred_box = model(image, word_id)  # [bs, C, H, W]
         loss, loss_box, loss_giou = criterion(pred_box, norm_bbox, img_size=img_size)
 
-        if args.log_plot == True:
-            wandb.log({"epoch":epoch,"train/loss ":loss.item()})
+        
 
         optimizer.zero_grad()
         loss.backward()
@@ -56,6 +55,7 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
         pred_box = xywh2xyxy(pred_bbox)
 
         losses.update(loss.item(), imgs.size(0))
+        
         losses_bbox.update(loss_box.item(), imgs.size(0))
         losses_giou.update(loss_giou.item(), imgs.size(0))
 
@@ -88,6 +88,9 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
 
             print(print_str)
             logging.info(print_str)
+              
+    if args.log_plot == True:
+        wandb.log({"epoch":epoch,"train/loss ":losses.avg})
 
 
 def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
@@ -132,8 +135,7 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
         # accu = np.sum(np.array((iou.data.cpu().numpy() > 0.5), dtype=float)) / args.batch_size
         accu = np.sum(np.array((iou.data.cpu().numpy() > 0.5), dtype=float)) / imgs.size(0)
 
-        if args.log_plot == True:
-            wandb.log({"epoch":train_epoch,"val/accuracy ":acc.val.item()})
+        
             
         acc.update(accu, imgs.size(0))
         miou.update(torch.mean(iou).item(), imgs.size(0))
@@ -152,9 +154,11 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
             logging.info(print_str)
 
     print(f"Train_epoch {train_epoch+1}  Validate Result:  Acc {acc.avg}, MIoU {miou.avg}.")
-
+    
     logging.info("Validate: %f, %f" % (acc.avg, float(miou.avg)))
-
+    
+    if args.log_plot == True:
+            wandb.log({"epoch":train_epoch,"val/accuracy ":acc.avg})
     return acc.avg, miou.avg
 
 def test_epoch(test_loader, model, img_size=512):
