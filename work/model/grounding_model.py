@@ -29,8 +29,8 @@ class GroundingModel(nn.Module):
             nn.Linear(args.hidden_dim, 4)
         )
 
-        self.pooled_feats_linear = nn.Linear(2048, 256) # make part of args
-        self.exp_feats_linear = nn.Linear(1024, 256)
+        #self.pooled_feats_linear = nn.Linear(2048, 256) # make part of args
+        #self.exp_feats_linear = nn.Linear(1024, 256)
 
         self.pos_encoder = PositionEmbeddingSine(args.hidden_dim//2, normalize=False)
         self.pos_encoder_1d = PositionEncoding1D(256)
@@ -77,9 +77,9 @@ class GroundingModel(nn.Module):
         
         # embed = self.vgtr(img_feature, img_exp_feature, exp_feature, None, expression_word_id)
         embed = self.vgtr(img_feature, exp_feature, None, expression_word_id)
-        print(embed.shape)
+        # print(embed.shape)
         embed2 = torch.cat([embed[:, i] for i in range(self.num_exp_tokens)], dim=-1)
-        print(embed2.shape)
+        # print(embed2.shape)
 
         pred = self.prediction_head(embed2).sigmoid()
 
