@@ -174,8 +174,8 @@ class EncoderLayer(nn.Module):
         q = k = self.with_pos_embed(src2, pos)  # q: (hw, bs, d)
         # text guided
         q = q.transpose(0, 1)
-        q = self.text_guided(expression_feature, q).transpose(0, 1)
-        #q = self.co_attention(expression_feature, q).transpose(0, 1)
+        #q = self.text_guided(expression_feature, q).transpose(0, 1)
+        q = self.co_attention(expression_feature, q).transpose(0, 1)
 
         src2 = self.self_attn(q, k, value=src2)[0]
         src = src + self.dropout1(src2)

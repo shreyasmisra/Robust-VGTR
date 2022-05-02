@@ -93,7 +93,7 @@ def getargs():
     args = parser.parse_args()
 
     # refcoco/refcoco+
-    args.split = 'testA' if args.dataset == 'refcoco' or args.dataset == 'refcoco+' else 'test'
+    #args.split = 'testA' if args.dataset == 'refcoco' or args.dataset == 'refcoco+' else 'test'
     # refcocog
     #args.split = 'val' if args.dataset == 'refcocog' else 'test'
     
