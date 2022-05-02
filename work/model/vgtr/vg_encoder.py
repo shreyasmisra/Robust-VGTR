@@ -6,6 +6,35 @@ import torch.nn.functional as F
 from torch import nn, Tensor
 import numpy as np
 
+class AlternatingCoAttention(nn.Module):
+    def __init__(self, d_model=256, l_norm=True):
+        super(AlternatingCoAttention, self).__init__()
+        self.l_norm = l_norm
+        if self.l_norm:
+            self.norm = nn.LayerNorm(d_model)
+    
+    def forward(self, exp_feat, img_feat, mult_feat=False):
+        # print(img_feat.shape, exp_feat.shape) # torch.Size([48, 256, 256]) torch.Size([48, 4, 256])
+        
+        # text guided visual attention. 
+        d_k = img_feat.shape[-1]
+        energy = torch.bmm(exp_feat, img_feat) / np.sqrt(d_k) # torch.Size([48, 4, 256])
+        attn = F.softmax(energy, dim=-1) # torch.Size([48, 4, 256])
+        context = torch.bmm(attn, img_feat) # torch.Size([48, 4, 256])
+
+        if mult_feat:
+            context = self.norm(torch.mul(context, exp_feat))
+        else:
+            context = self.norm(torch.add(context, exp_feat))
+
+        energy2 = torch.bmm(context, img_feat) / np.sqrt(d_k) # # torch.Size([48, 4, 256])
+        attn2 = F.softmax(energy2, dim=-1)
+        context2 = torch.bmm(attn2.transpose(1, 2), exp_feat) # torch.Size([48, 256, 256])
+
+        return self.norm(context2 + img_feat)
+        
+
+
 
 class TextGuidedCoAttention(nn.Module):
     def __init__(self, d_model=256, l_norm=True):
@@ -148,6 +177,7 @@ class EncoderLayer(nn.Module):
         self.expression_ffn_activation = _get_activation_fn(activation)
         self.text_guided = TextGuidedQ(d_model=d_model)
         self.co_attention = TextGuidedCoAttention(d_model=d_model)
+        self.alternating_co_attention = AlternatingCoAttention(d_model=d_model)
 
     def with_pos_embed(self, tensor, pos: Optional[Tensor]):
         return tensor if pos is None else tensor + pos
@@ -174,10 +204,12 @@ class EncoderLayer(nn.Module):
         q = k = self.with_pos_embed(src2, pos)  # q: (hw, bs, d)
         # text guided
         q = q.transpose(0, 1)
-        #q = self.text_guided(expression_feature, q).transpose(0, 1)
-        q = self.co_attention(expression_feature, q).transpose(0, 1)
+        # q = self.text_guided(expression_feature, q).transpose(0, 1)
+        #q = self.co_attention(expression_feature, q).transpose(0, 1)
+        q = self.alternating_co_attention(expression_feature, q).transpose(0, 1)
 
-        src2 = self.self_attn(q, k, value=src2)[0]
+        # src2 = self.self_attn(q, k, value=src2)[0]
+        src2 = q
         src = src + self.dropout1(src2)
         src2 = self.norm2(src)
         fused_vis_feature = src2
