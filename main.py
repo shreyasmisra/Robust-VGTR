@@ -14,8 +14,8 @@ from torch.utils.tensorboard import SummaryWriter
 from work.utils.utils import *
 from work.model.criterion import Criterion
 from work.model.grounding_model import GroundingModel
-from work.engine import train_epoch, validate_epoch, test_epoch
-from work.data.get_dataloader import get_train_loader, get_val_loader, get_test_loader
+from work.engine import train_epoch, validate_epoch, test_epoch, inference_epoch
+from work.data.get_dataloader import get_train_loader, get_val_loader, get_test_loader, get_inference_loader
 import warnings
 mpl.use('Agg')
 warnings.filterwarnings('ignore')
@@ -90,6 +90,8 @@ def getargs():
                         help='percentage of data to be used')
     parser.add_argument('--save_data', default='', type=str,
                         help='save path for images and queries')
+    parser.add_argument('--inference', default=False, action='store_true',
+                        help='inference mode')
     args = parser.parse_args()
 
     # refcoco/refcoco+
@@ -223,12 +225,44 @@ def test(args):
     test_epoch(args, test_loader, model, args.size)
 
 
+def inference(args):
+
+    # Dataset
+    if args.batch_size != 1:
+        warnings.warn('metrics may not correct!', Warning)
+
+    inference_loader = get_inference_loader(args)
+
+    # model
+    model = GroundingModel(args)
+    model = torch.nn.DataParallel(model).cuda()
+
+    assert args.pretrain is not None
+    if os.path.isfile(args.pretrain):
+        pretrained_dict = torch.load(args.pretrain)['state_dict']
+        model_dict = model.state_dict()
+        pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
+        assert (len([k for k, v in pretrained_dict.items()]) != 0)
+        model_dict.update(pretrained_dict)
+        model.load_state_dict(model_dict)
+        print("=> loaded pretrain model at {}".format(args.pretrain))
+        logging.info("=> loaded pretrain model at {}".format(args.pretrain))
+    else:
+        print(("=> no pretrained file found at '{}'".format(args.pretrain)))
+        logging.info("=> no pretrained file found at '{}'".format(args.pretrain))
+
+    model.eval()
+    inference_epoch(args, inference_loader, model, args.size)
+
 if __name__ == "__main__":
 
     args = getargs()
     if args.test:
         print('Starting Test....')
         test(args)
+    elif args.inference:
+        print('Starting inference')
+        inference(args)
     else:
         print('Starting Training....')
         train(args)

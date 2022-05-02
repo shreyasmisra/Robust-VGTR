@@ -160,6 +160,61 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
 
     return acc.avg, miou.avg
 
+def inference_epoch(args, inference_loader, model, img_size=512):
+
+    model.eval()
+    
+    save_count = 0
+
+    for batch_idx, (imgs, word_id, word_mask, phrase, ret_img) in enumerate(inference_loader):
+        imgs = imgs.cuda()
+        word_id = word_id.cuda()
+        image = Variable(imgs)
+        word_id = Variable(word_id)
+
+        with torch.no_grad():
+            _, _, pred_box = model(image, word_id)  # [bs, C, H, W]
+
+        pred_bbox = pred_box.detach().cpu()
+        pred_bbox = pred_bbox * img_size
+        pred_bbox = xywh2xyxy(pred_bbox)
+
+        # constrain
+        pred_bbox[pred_bbox < 0.0] = 0.0
+        pred_bbox[pred_bbox > img_size-1] = img_size-1
+
+        # save the output
+        #print(ret_img.shape)
+        #print(pred_bbox)
+        img_save = ret_img[0].detach().cpu().numpy()
+        img_save = np.ascontiguousarray(img_save, dtype=np.uint8)
+        pred_bbox_save = pred_bbox[0].clone().detach().cpu().numpy()
+        #print(rand_idx, phrase)
+        phrase_save = phrase[0]
+        
+        SAVE_PATH_IMG = args.save_data + "/imgs/" + str(save_count) + '.png'
+        SAVE_PATH_PHRASE = args.save_data + "/phrases.txt"
+        
+        # draw bbox on image
+        #print(img_save.shape)
+        left_pred = int(pred_bbox_save[0])
+        top_pred = int(pred_bbox_save[1])
+        right_pred = int(pred_bbox_save[2])
+        bottom_pred = int(pred_bbox_save[3])
+        
+        cv2.rectangle(img_save, (left_pred, top_pred), (right_pred, bottom_pred), (0,255,0), 3) # green 
+        
+        plt.imshow(img_save)
+        plt.show()
+        
+        plt.imsave(SAVE_PATH_IMG, img_save)
+        print(phrase_save)
+        #with open(SAVE_PATH_PHRASE, 'a') as f:
+        #    f.write('[' + str(save_count) + ']' + '\t' + phrase_save + '\n')
+        
+        save_count += 1
+            
+
 def test_epoch(args, test_loader, model, img_size=512):
 
     acc = AverageMeter()

@@ -1,3 +1,4 @@
 #python main.py --gpu 0 --savepath store/logs_co_attn_contrastive_loss/resume_18 --resume store/logs_co_attn_contrastive_loss/model/model_refcoco_batch_45/model_refcoco_checkpoint.pth.tar --data_perc 0.33
 #python main.py --gpu 0 --savepath store/logs_co_attn_contrastive_loss --resume store/contrastive_loss/model/model_refcoco_batch_48/model_refcoco_checkpoint.pth.tar --data_perc 0.33
-#python main.py --gpu 0 --pretrain "/home/ubuntu/VGTR/store/logs_co_attn_contrastive_loss/model/model_refcoco_batch_45/model_refcoco_best.pth.tar" --save_data "/home/ubuntu/VGTR/store/logs_co_attn_contrastive_loss/output/" --test --split testA
+#python main.py --gpu 0 --pretrain "/home/ubuntu/VGTR/store/logs_co_attn_contrastive_loss/model/model_refcoco_batch_45/model_refcoco_best.pth.tar" --save_data "/home/ubuntu/VGTR/store/logs_co_attn_contrastive_loss/output/" --test --split testA --data_perc 0.99
+python main.py --gpu 0 --inference --save_data "/home/ubuntu/VGTR/store/our_imgs_results/" --pretrain "/home/ubuntu/VGTR/store/logs_co_attn_contrastive_loss/model/model_refcoco_batch_45/model_refcoco_best.pth.tar"

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from .unified_dataset import UnifiedDataset
+from .unified_dataset import UnifiedDataset, OurImgDataset
 from torchvision.transforms import Compose, ToTensor, Normalize
 from torch.utils.data import DataLoader
-
 
 input_transform = Compose([
     ToTensor(),
@@ -42,6 +41,13 @@ def get_val_loader(args):
     return DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False,
                       pin_memory=True, drop_last=True, num_workers=args.workers)
 
+def get_inference_loader(args):
+    inference_dataset = OurImgDataset(root="/home/ubuntu/VGTR/store/ln_data/our_imgs/",
+                                        transforms=input_transform,
+                                        max_query_len=args.max_query_len)
+    args.vocab_size = len(inference_dataset.corpus)
+    return DataLoader(inference_dataset, batch_size=1, shuffle=False,
+                      pin_memory=True, drop_last=False, num_workers=args.workers)
 
 def get_test_loader(args, split):
 
