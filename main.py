@@ -9,7 +9,7 @@ import torch.optim
 import torch.utils.data.distributed
 # import torch.backends.cudnn as cudnn
 
-from torch.utils.tensorboard import SummaryWriter
+#from torch.utils.tensorboard import SummaryWriter
 
 from work.utils.utils import *
 from work.model.criterion import Criterion
@@ -95,7 +95,7 @@ def getargs():
     args = parser.parse_args()
 
     # refcoco/refcoco+
-    args.split = 'testA' if args.dataset == 'refcoco' or args.dataset == 'refcoco+' else 'test'
+    #args.split = 'testA' if args.dataset == 'refcoco' or args.dataset == 'refcoco+' else 'test'
     # refcocog
     #args.split = 'val' if args.dataset == 'refcocog' else 'test'
     

@@ -7,7 +7,7 @@ import cv2
 import torch
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
-from torch.utils.tensorboard import SummaryWriter
+#from torch.utils.tensorboard import SummaryWriter
 from .utils.utils import AverageMeter, xywh2xyxy, bbox_iou
 
 
