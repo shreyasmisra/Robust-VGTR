@@ -167,7 +167,7 @@ def train(args):
     best_accu = -float('Inf')
 
     start = 0
-    if args.start_epoch:
+    if hasattr(args, 'start_epoch'):
         start = args.start_epoch
 
     # train
