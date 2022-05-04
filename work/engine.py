@@ -6,8 +6,6 @@ import numpy as np
 import torch
 from torch.autograd import Variable
 from .utils.utils import AverageMeter, xywh2xyxy, bbox_iou
-import wandb
-
 
 def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img_size=512):
 
@@ -88,9 +86,11 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
 
             print(print_str)
             logging.info(print_str)
-              
-    if args.log_plot == True:
-        wandb.log({"epoch":epoch,"train/loss ":losses.avg})
+    
+    torch.cuda.empty_cache()
+    
+    #if args.log_plot == True:
+      #  wandb.log({"epoch":epoch,"train/loss ":losses.avg})
 
 
 def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
@@ -157,8 +157,10 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
     
     logging.info("Validate: %f, %f" % (acc.avg, float(miou.avg)))
     
-    if args.log_plot == True:
-            wandb.log({"epoch":train_epoch,"val/accuracy ":acc.avg})
+    torch.cuda.empty_cache()
+    
+    #if args.log_plot == True:
+     #       wandb.log({"epoch":train_epoch,"val/accuracy ":acc.avg})
     return acc.avg, miou.avg
 
 def test_epoch(test_loader, model, img_size=512):

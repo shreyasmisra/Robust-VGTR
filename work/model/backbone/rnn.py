@@ -118,7 +118,7 @@ class TextualEncoder(nn.Module):
         output = self.bert_model(sent)
         output_vec = self.fc1(output.last_hidden_state)
        
-        context, hidden, embedded = self.rnn(sent)  # [bs, maxL, d]
+        #context, hidden, embedded = self.rnn(sent)  # [bs, maxL, d]
         # sent_feature = [module(context, embedded, sent)[-1] for module in self.parser]
         
         sent_feature = [module(output_vec, output_vec, sent)[-1] for module in self.parser]
