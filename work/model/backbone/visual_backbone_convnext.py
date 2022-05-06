@@ -4,6 +4,7 @@ from torch import nn
 from torchvision.models._utils import IntermediateLayerGetter
 import torch.nn.functional as F
 
+## Raising CUDA outof memory error for batch size greater than 8. Not Used.
 
 class FrozenBatchNorm2d(torch.nn.Module):
     """
@@ -47,15 +48,11 @@ class BackboneBase(nn.Module):
 
     def __init__(self, backbone: nn.Module, train_backbone: bool, return_interm_layers: bool):
         super().__init__()
-        # for name, parameter in backbone.named_parameters():
-            # if not train_backbone or 'layer2' not in name and 'layer3' not in name and 'layer4' not in name:
-            #     parameter.requires_grad_(False)
         if return_interm_layers:
             return_layers = return_layers = {"4":"0", "5": "1", "6": "2", "7": "3"}
         else:
             return_layers = {'features': "0"}
         self.body = IntermediateLayerGetter(backbone.features, return_layers=return_layers)
-        # self.body =  nn.Sequential(*list(backbone.children())[:-1])
 
     def forward(self, x):
 
@@ -117,7 +114,6 @@ class Neck(nn.Module):
     
     def forward(self, feats):
 
-        # assert len(feats) == self.n_levels
         torch.cuda.empty_cache()
         for i in range(self.n_levels): 
             torch.cuda.empty_cache()
@@ -136,10 +132,9 @@ class Neck(nn.Module):
                                                          mode='bilinear',
                                                          align_corners=True)
             Out.append(out_append)
-        # for i in Out:
-        #     print(i.shape)
+
         out = torch.cat(Out, dim=1)
-        print(out.shape)
+
         out = self.post_conv(out)
 
         return out
@@ -157,7 +152,7 @@ class VisualBackbone(nn.Module):
 
     def forward(self, img):
         out = self.neck(self.cnn(img))
-        # out = self.cnn(img)
+        out = self.cnn(img)
 
         return out
 

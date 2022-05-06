@@ -92,6 +92,8 @@ def getargs():
                         help='save path for images and queries')
     parser.add_argument('--inference', default=False, action='store_true',
                         help='inference mode')
+    parser.add_argument('--use_co_attention', default=False, action='store_true',
+                        help='Co attention in encoder')
     args = parser.parse_args()
 
     # refcoco/refcoco+
@@ -108,10 +110,6 @@ def getargs():
 
 
 def train(args):
-
-    # log
-    #if args.save_data:
-    #    writer = SummaryWriter(args.save_data + '/runs/')
     
     if args.savename == 'default':
         args.savename = f'model_{args.dataset}_batch_{args.batch_size}'

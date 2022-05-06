@@ -6,8 +6,6 @@ import torch.nn.functional as F
 import numpy as np
 import math
 
-
-
 class ContrastiveLoss(nn.Module):
     def __init__(self):
         super().__init__()
@@ -17,6 +15,7 @@ class ContrastiveLoss(nn.Module):
         self.alpha = 0.75
 
      ##Loss from: https://github.com/edreisMD/ConVIRT-pytorch/blob/master/loss/nt_xent.py   
+    
     def softCrossEnt(self, target, logits):
         """
         From the pytorch discussion Forum:
@@ -28,36 +27,6 @@ class ContrastiveLoss(nn.Module):
  
     def forward(self, image_feat, text_feat):
         batch_size = image_feat.shape[0]
-        # tmp = torch.ones(batch_size).cuda()
-        # image_feat = image_feat.reshape(image_feat.shape[0], image_feat.shape[1], image_feat.shape[2] * image_feat.shape[3])
-
-
-        # for i in range(image_feat.shape[2]):
-        #     a = image_feat[:,:,i].unsqueeze(2)
-        #     b = text_feat[:,i,:].unsqueeze(2)
-        #     c = F.cosine_similarity(a, b, dim=2)#.unsqueeze(1)
-        #     d = -F.log_softmax(c, dim=-1)
-        #     e = d.mean(dim=1)
-        #     loss = torch.add(tmp, e)
-        # loss = loss / image_feat.shape[2]
-        # loss = torch.mean(loss)
-
-
-        # logits = image_feat @ text_feat.transpose(0,2,1) / self.temp
-        # label_shape = logits.shape[1] * logits.shape[2]
-        # labels = torch.arange(label_shape)
-        # labels = labels.view(1, logits.shape[1], logits.shape[2])
-        # labels = labels.repeat(batch_size, 1, 1)
-        # labels = labels.cuda()
-        # print("labels: ", labels.shape)
-        # print("logits: ",logits.shape)
-
-        # loss_i2t = F.cross_entropy(logits, labels) # just do this for now
-        # loss_t2i = F.cross_entropy(logits.t(), labels)
-
-        # cont_loss = (loss_i2t + loss_t2i) / 2
-        
-        # LARGE_NUM = 1e9
 
         # Get (normalized) hidden1 and hidden2.
         image_feat = image_feat.flatten(1)
@@ -73,12 +42,6 @@ class ContrastiveLoss(nn.Module):
 
         labels = F.one_hot(torch.arange(start=0, end=batch_size, dtype=torch.int64), num_classes=batch_size).float()
         labels = labels.to("cuda")
-        # masks = F.one_hot(torch.arange(start=0, end=batch_size, dtype=torch.int64), num_classes=batch_size)
-        
-        """
-        Different from Image-Image contrastive learning
-        In the case of Image-Text contrastive learning we do not compute the similarity function between the Image-Image and Text-Text pairs  
-        """
 
         logits_ab = torch.matmul(hidden1, torch.transpose(hidden2_large,0, 1)) / self.temp
         logits_ba = torch.matmul(hidden2, torch.transpose(hidden1_large,0, 1)) / self.temp
@@ -87,9 +50,6 @@ class ContrastiveLoss(nn.Module):
         loss_b = self.softCrossEnt(labels, logits_ba)
 
         return self.alpha*loss_a + (1-self.alpha)*loss_b
-
-        # return loss_i2t
-
    
 
 class Criterion(nn.Module):

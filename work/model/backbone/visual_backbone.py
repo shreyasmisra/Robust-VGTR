@@ -119,15 +119,6 @@ class Neck(nn.Module):
         return torch.nn.functional.interpolate(feat1, size=(H, W), mode='bilinear',
                                                align_corners=True) + feat2
 
-#    def pool_features(self, feats, out_size = 4):
-#        pooled_feats = []
-#        pool = nn.AdaptiveAvgPool2d((out_size, out_size))
-        
-#        for f in feats:
-#            pooled_feats.append(pool(f))
-        
-#        return pooled_feats    
-    
     def forward(self, feats):
 
         assert len(feats) == self.n_levels
@@ -150,8 +141,6 @@ class Neck(nn.Module):
             Out.append(out_append)
         out = torch.cat(Out, dim=1)
         out = self.post_conv(out)
-
-        #feats = self.pool_features(feats)
 
         return out
 

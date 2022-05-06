@@ -7,9 +7,9 @@ from torch import nn, Tensor
 import numpy as np
 
 
-class TextGuidedCoAttention(nn.Module):
+class AlternatingCoAttention(nn.Module):
     def __init__(self, d_model=256, l_norm=True):
-        super(TextGuidedCoAttention, self).__init__()
+        super(AlternatingCoAttention, self).__init__()
         self.l_norm = l_norm
         if l_norm:
             self.norm = nn.LayerNorm(d_model)
@@ -64,14 +64,14 @@ class VGEncoder(nn.Module):
 
     def __init__(self, d_model=512, nhead=8, num_encoder_layers=6,
                  dim_feedforward=2048, dropout=0.1,
-                 activation="relu"):
+                 activation="relu", use_co_attention=False):
         super().__init__()
 
         self.hidden_dim = d_model
         self.d_model = d_model
         self.nhead = nhead
 
-        encoder_layer = EncoderLayer(d_model, nhead, dim_feedforward, dropout, activation)
+        encoder_layer = EncoderLayer(d_model, nhead, dim_feedforward, dropout, activation, use_co_attention=use_co_attention)
         encoder_norm = nn.LayerNorm(d_model)
         encoder_norm2 = nn.LayerNorm(d_model)
         self.encoder = Encoder(encoder_layer, num_encoder_layers, encoder_norm, encoder_norm2)
@@ -87,12 +87,6 @@ class VGEncoder(nn.Module):
 
         src = img_feature.flatten(2).permute(2, 0, 1)  # (hw, bs, d)
         pos_embed = pos_feature.flatten(2).permute(2, 0, 1)
-#        print('encoder img', src.shape)
-#        print('pos embed', pos_embed.shape)
-#        print('enc exp', expression_feature.shape)
-
-        # src = img_feature.permute(1, 0, 2)
-        # pos_embed = pos_feature
 
         out, expf = self.encoder(src, expression_feature, pos=pos_embed, exp_pos_feature=exp_pos_feature)
         out = out.transpose(0, 1)
@@ -129,7 +123,7 @@ class Encoder(nn.Module):
 class EncoderLayer(nn.Module):
 
     def __init__(self, d_model, nhead, dim_feedforward=2048, dropout=0.1,
-                 activation="relu"):
+                 activation="relu", use_co_attention=False):
         super().__init__()
         self.self_attn = nn.MultiheadAttention(d_model, nhead, dropout=dropout)
         self.exp_self_attn = nn.MultiheadAttention(d_model, nhead, dropout=dropout)
@@ -150,7 +144,9 @@ class EncoderLayer(nn.Module):
         self.expression_ffn_dropout2 = nn.Dropout(dropout)
         self.expression_ffn_activation = _get_activation_fn(activation)
         self.text_guided = TextGuidedQ(d_model=d_model)
-        self.co_attention = TextGuidedCoAttention(d_model=d_model)
+        
+        self.co_attention = AlternatingCoAttention(d_model=d_model)
+        self.use_co_attention = use_co_attention
 
     def with_pos_embed(self, tensor, pos: Optional[Tensor]):
         return tensor if pos is None else tensor + pos
@@ -177,8 +173,11 @@ class EncoderLayer(nn.Module):
         q = k = self.with_pos_embed(src2, pos)  # q: (hw, bs, d)
         # text guided
         q = q.transpose(0, 1)
-        # q = self.text_guided(expression_feature, q).transpose(0, 1)
-        q = self.co_attention(expression_feature, q).transpose(0, 1)
+
+        if self.use_co_attention:
+            q = self.co_attention(expression_feature, q).transpose(0, 1)
+        else:
+            q = self.text_guided(expression_feature, q).transpose(0, 1)
 
         src2 = self.self_attn(q, k, value=src2)[0]
         src = src + self.dropout1(src2)
