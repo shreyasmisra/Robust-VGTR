@@ -32,7 +32,7 @@ def getargs():
     parser.add_argument('--rnn_layers', default=2, type=int, help='num of lstm layers')
     parser.add_argument('--lr', default=1e-4*0.5, type=float, help='learning rate')
     parser.add_argument('--lr_backbone', default=1e-5*0.5, type=float, help='learning rate')
-    parser.add_argument('--hidden_dim', default=256, type=int,
+    parser.add_argument('--hidden_dim', default=768, type=int,
                         help="Size of the embeddings (dimension of the transformer)")  # d_model
     parser.add_argument('--size', default=512, type=int, help='image size')
     parser.add_argument('--gpu', help='gpu id, split by , ')
@@ -90,19 +90,13 @@ def getargs():
                         help='pretrained cnn weights')
     parser.add_argument('--data_perc', default='0.3', type=str,
                         help='percentage of data to be used')
-    parser.add_argument('--log_plot', default=False, type=bool,
-                        help='to plot logs using wandb')
     args = parser.parse_args()
-
-    if args.log_plot == True:
-        #Please pip install wandb if an error shows up
-        wandb.init(project="visual_grounding", reinit=True)
 
 
     # refcoco/refcoco+
-    args.split = 'testA' if args.dataset == 'refcoco' or args.dataset == 'refcoco+' else 'test'
+    #args.split = 'testA' if args.dataset == 'refcoco' or args.dataset == 'refcoco+' else 'test'
     # refcocog
-    args.split = 'val' if args.dataset == 'refcocog' else 'test'
+    #args.split = 'val' if args.dataset == 'refcocog' else 'test'
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu

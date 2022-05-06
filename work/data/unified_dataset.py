@@ -152,4 +152,4 @@ class UnifiedDataset(data.Dataset):
         word_id = self.corpus.tokenize(phrase, self.query_len)
         word_mask = np.array(word_id > 0, dtype=int)
 
-        return img, np.array(word_id, dtype=int), np.array(word_mask, dtype=int), np.array(bbox, dtype=np.float32)
+        return img, np.array(word_id, dtype=int), np.array(word_mask, dtype=int), np.array(bbox, dtype=np.float32), phrase

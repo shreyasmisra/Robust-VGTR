@@ -125,13 +125,13 @@ class EncoderLayer(nn.Module):
                      exp_pos_feature=None):
 
         # self-attn for exp feature
-        expression_feature = expression_feature.permute(1, 0, 2)
-        expression_feature2 = self.exp_self_norm1(expression_feature)
-        exp_q = exp_k = self.with_pos_embed(expression_feature2, exp_pos_feature)
-        expression_feature2 = self.exp_self_attn(exp_q, exp_k, value=expression_feature2)[0]  # (maxL, bs, d)
-        expression_feature = expression_feature + self.exp_self_dropout1(expression_feature2)
-        expression_feature = self.exp_self_norm2(expression_feature)
-        expression_feature = expression_feature.permute(1, 0, 2)
+        #expression_feature = expression_feature.permute(1, 0, 2)
+        #expression_feature2 = self.exp_self_norm1(expression_feature)
+        #exp_q = exp_k = self.with_pos_embed(expression_feature2, exp_pos_feature)
+        #expression_feature2 = self.exp_self_attn(exp_q, exp_k, value=expression_feature2)[0]  # (maxL, bs, d)
+        #expression_feature = expression_feature + self.exp_self_dropout1(expression_feature2)
+        #expression_feature = self.exp_self_norm2(expression_feature)
+        #expression_feature = expression_feature.permute(1, 0, 2)
 
         expression_feature = expression_feature  # (bs, maxL, d)
 

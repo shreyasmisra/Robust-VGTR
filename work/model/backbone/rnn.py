@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from transformers import BertModel
+from transformers import BertModel, BertTokenizer
 
 class RNNEncoder(nn.Module):
 
@@ -81,12 +81,12 @@ class PhraseAttention(nn.Module):
 
     def forward(self, context, embedded, input_labels):
 
-        cxt_scores = self.fc(context).squeeze(2)
+        cxt_scores = self.fc(context).squeeze(2) # B, seq len
         attn = F.softmax(cxt_scores)
 
-        is_not_zero = (input_labels != 0).float()
-        attn = attn * is_not_zero
-        attn = attn / attn.sum(1).view(attn.size(0), 1).expand(attn.size(0), attn.size(1))
+        #is_not_zero = (input_labels != 0).float()
+        #attn = attn * is_not_zero
+        #attn = attn / attn.sum(1).view(attn.size(0), 1).expand(attn.size(0), attn.size(1))
 
         # compute weighted embedding
         attn3 = attn.unsqueeze(1)
@@ -99,30 +99,48 @@ class PhraseAttention(nn.Module):
 class TextualEncoder(nn.Module):
     def __init__(self, args):
         super().__init__()
-        self.bert_model = BertModel.from_pretrained("bert-base-uncased")
+        self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", padding=True)
+        self.bert_model = BertModel.from_pretrained("bert-base-uncased", output_hidden_states=True)
         self.fc1 = nn.Linear(768,256)
-        self.rnn = RNNEncoder(args.vocab_size, args.embedding_dim,
-                      args.hidden_dim, args.rnn_hidden_dim,
-                      bidirectional=True,
-                      input_dropout_p=0.1,
-                      dropout_p=0.1,
-                      n_layers=args.rnn_layers,
-                      variable_lengths=True,
-                      rnn_type='lstm')
+        #self.rnn = RNNEncoder(args.vocab_size, args.embedding_dim,
+         #             args.hidden_dim, args.rnn_hidden_dim,
+          #            bidirectional=True,
+          #            input_dropout_p=0.1,
+          #            dropout_p=0.1,
+          #            n_layers=args.rnn_layers,
+          #            variable_lengths=True,
+          #            rnn_type='lstm')
         self.parser = nn.ModuleList([PhraseAttention(input_dim=args.rnn_hidden_dim * 2)
                        for _ in range(args.num_exp_tokens)])
 
     def forward(self, sent):
-        max_len = (sent != 0).sum(1).max().item()
-        sent = sent[:, :max_len]
-        output = self.bert_model(sent)
-        output_vec = self.fc1(output.last_hidden_state)
-       
-        context, hidden, embedded = self.rnn(sent)  # [bs, maxL, d]
-        # sent_feature = [module(context, embedded, sent)[-1] for module in self.parser]
+    # sent -> phrase
+        #max_len = (sent != 0).sum(1).max().item()
+        #sent = sent[:, :max_len]
+        tokenized_inp = self.tokenizer(sent, return_tensors="pt", padding=True)
         
-        sent_feature = [module(output_vec, output_vec, sent)[-1] for module in self.parser]
-        return torch.stack(sent_feature, dim=1)
+        input_ids = tokenized_inp['input_ids'].cuda()
+        token_type_ids = tokenized_inp['token_type_ids'].cuda()
+        attention_mask = tokenized_inp['attention_mask'].cuda()
+        
+        output = self.bert_model(input_ids, attention_mask, token_type_ids)
+        
+        context, hidden, embed = output.last_hidden_state, output.hidden_states[0], output.hidden_states[1]
+        
+        hidden = hidden.detach().cpu()
+        embed = embed.detach().cpu()
+        input_ids = input_ids.detach().cpu()
+        token_type_ids = token_type_ids.detach().cpu()
+        attention_mask = attention_mask.detach().cpu()
+        #output_vec = self.fc1(context)
+       
+        #context, hidden, embedded = self.rnn(sent)  # [bs, maxL, d]
+        # sent_feature = [module(context, embedded, sent)[-1] for module in self.parser]
+        #print(hidden.shape, embed.shape, context.shape)
+        
+        #sent_feature = [module(context, embed, sent)[-1] for module in self.parser]
+        #return torch.stack(sent_feature, dim=1)
+        return context
 
 
 def build_textual_encoder(args):

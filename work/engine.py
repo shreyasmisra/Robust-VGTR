@@ -6,7 +6,6 @@ import numpy as np
 import torch
 from torch.autograd import Variable
 from .utils.utils import AverageMeter, xywh2xyxy, bbox_iou
-import wandb
 
 
 def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img_size=512):
@@ -23,13 +22,13 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
     model.train()
     end = time.time()
 
-    for batch_idx, (imgs, word_id, word_mask, bbox) in enumerate(train_loader):
+    for batch_idx, (imgs, word_id, word_mask, bbox, phrase) in enumerate(train_loader):
         imgs = imgs.cuda()
-        word_id = word_id.cuda()
+        #word_id = word_id.cuda()
         bbox = bbox.cuda()
         bbox = torch.clamp(bbox, min=0, max=args.size - 1)
         image = Variable(imgs)
-        word_id = Variable(word_id)
+        #word_id = Variable(word_id)
         bbox = Variable(bbox)
 
         norm_bbox = torch.zeros_like(bbox).cuda()
@@ -40,10 +39,8 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
         norm_bbox[:, 3] = bbox[:, 3] - bbox[:, 1]    # h
 
         # forward
-        pred_box = model(image, word_id)  # [bs, C, H, W]
+        pred_box = model(image, phrase)  # [bs, C, H, W]
         loss, loss_box, loss_giou = criterion(pred_box, norm_bbox, img_size=img_size)
-
-        
 
         optimizer.zero_grad()
         loss.backward()
@@ -88,9 +85,8 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
 
             print(print_str)
             logging.info(print_str)
-              
-    if args.log_plot == True:
-        wandb.log({"epoch":epoch,"train/loss ":losses.avg})
+        
+        torch.cuda.empty_cache()
 
 
 def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
@@ -102,12 +98,12 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
     model.eval()
     end = time.time()
 
-    for batch_idx, (imgs, word_id, word_mask, bbox) in enumerate(val_loader):
+    for batch_idx, (imgs, word_id, word_mask, bbox, phrase) in enumerate(val_loader):
         imgs = imgs.cuda()
-        word_id = word_id.cuda()
+        #word_id = word_id.cuda()
         bbox = bbox.cuda()
         image = Variable(imgs)
-        word_id = Variable(word_id)
+        #word_id = Variable(word_id)
         bbox = Variable(bbox)
         bbox = torch.clamp(bbox, min=0, max=args.size-1)
 
@@ -119,7 +115,8 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
         norm_bbox[:, 3] = bbox[:, 3] - bbox[:, 1]    # h
 
         with torch.no_grad():
-            pred_box = model(image, word_id)  # [bs, C, H, W]
+            #pred_box = model(image, word_id)  # [bs, C, H, W]
+            pred_box = model(image, phrase)
 
         pred_bbox = pred_box.detach().cpu()
         pred_bbox = pred_bbox * img_size
@@ -157,8 +154,8 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
     
     logging.info("Validate: %f, %f" % (acc.avg, float(miou.avg)))
     
-    if args.log_plot == True:
-            wandb.log({"epoch":train_epoch,"val/accuracy ":acc.avg})
+    torch.cuda.empty_cache()
+    
     return acc.avg, miou.avg
 
 def test_epoch(test_loader, model, img_size=512):
@@ -167,12 +164,14 @@ def test_epoch(test_loader, model, img_size=512):
     miou = AverageMeter()
     model.eval()
 
-    for batch_idx, (imgs, word_id, word_mask, bbox) in enumerate(test_loader):
+    for batch_idx, (imgs, word_id, word_mask, bbox, phrase) in enumerate(test_loader):
         imgs = imgs.cuda()
-        word_id = word_id.cuda()
+        #word_id = word_id.cuda()
         bbox = bbox.cuda()
         image = Variable(imgs)
-        word_id = Variable(word_id)
+        #word_id = Variable(word_id)
+        #phrase = phrase.cuda()
+        #phrase = Variable(phrase)
         bbox = Variable(bbox)
         bbox = torch.clamp(bbox, min=0, max=img_size-1)
 
@@ -184,7 +183,7 @@ def test_epoch(test_loader, model, img_size=512):
         norm_bbox[:, 3] = bbox[:, 3] - bbox[:, 1]    # h
 
         with torch.no_grad():
-            pred_box = model(image, word_id)  # [bs, C, H, W]
+            pred_box = model(image, phrase)  # [bs, C, H, W]
 
         pred_bbox = pred_box.detach().cpu()
         pred_bbox = pred_bbox * img_size

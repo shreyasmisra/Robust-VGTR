@@ -25,20 +25,20 @@ class GroundingModel(nn.Module):
             nn.Linear(args.hidden_dim, 4)
         )
 
-        self.pooled_feats_linear = nn.Linear(2048, 256) # make part of args
-        self.exp_feats_linear = nn.Linear(1024, 256)
+        self.pooled_feats_linear = nn.Linear(2048, 768) # make part of args
+        #self.exp_feats_linear = nn.Linear(1024, 256)
 
     def forward(self, img, expression_word_id):
 
         img_feature, pooled_features = self.visual_encoder(img)
         exp_feature = self.textual_encoder(expression_word_id)
         
-        img_projected_feats = [] # each element is 48, 256
-        for i in range(len(pooled_features)):
-            pooled_feats_flatten = pooled_features[i].flatten(2).flatten(1)
-            img_projected_feats.append(self.pooled_feats_linear(pooled_feats_flatten))
+        #img_projected_feats = [] # each element is 48, 256
+        #for i in range(len(pooled_features)):
+        #    pooled_feats_flatten = pooled_features[i].flatten(2).flatten(1)
+        #    img_projected_feats.append(self.pooled_feats_linear(pooled_feats_flatten))
 
-        exp_projected_feats = self.exp_feats_linear(exp_feature.flatten(1)) # 48, 256
+        #exp_projected_feats = self.exp_feats_linear(exp_feature.flatten(1)) # 48, 256
 
         # use exp_projected_feats and img_projected_feats to input to MLP or attention 
         # shape = 48, 256. B, 256        

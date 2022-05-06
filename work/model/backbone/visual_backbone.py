@@ -154,7 +154,7 @@ class Neck(nn.Module):
         out = torch.cat(Out, dim=1)
         out = self.post_conv(out)
 
-        feats = self.pool_features(feats)
+        #feats = self.pool_features(feats)
 
         return out, feats
 
