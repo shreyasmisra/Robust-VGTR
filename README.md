@@ -1,5 +1,11 @@
-# Visual Grounding with Transformers
+# Robust Visual Grounding with Transformers
 
+## Contrastive loss and Alternating Co-Attention Branch
+
+This branch contains the code for contrastive loss and alternating co-attention. First we implement both seperately and then combne both and compute the accuracy and MIoU. The code for contrastive loss is in work/model/criterion.py and the code for alternating co-attention is in work/model/vgtr/vg_encoder.py file.
+To run with alternating co-attention, use the --use_co_attention flag while calling main.py
+
+This project is based on the Visual Grounding with Transformers paper and more information is provided below.
 
 ##  Overview
 
