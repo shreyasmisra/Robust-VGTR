@@ -1,5 +1,10 @@
-# Visual Grounding with Transformers
+# Robust Visual Grounding with Transformers
 
+## BERT Branch
+
+This branch contains the model with BERT as textual backbone. We use the Transformers API from Huggingface.co to get the pretrained model and BERT tokenizer. The modified code is present in the work/model/backbone/rnn.py file. First we tokenize with the input phrase and obtain the input IDs, token IDs and attention masks. We use this as input to a pretrained BERT model and use the output context as the textual features.
+
+This project is based on the Visual Grounding with Transformers paper and more information is provided below.
 
 ##  Overview
 
