@@ -7,7 +7,6 @@ import cv2
 import torch
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
-from torch.utils.tensorboard import SummaryWriter
 from .utils.utils import AverageMeter, xywh2xyxy, bbox_iou
 
 
@@ -202,20 +201,17 @@ def test_epoch(args, test_loader, model, img_size=512):
         
         if args.save_data:
             # save the output
-            #print(ret_img.shape)
             rand_idx = np.random.randint(0, high=imgs.shape[0], size=1)[0]
             img_save = ret_img[rand_idx].detach().cpu().numpy()
             img_save = np.ascontiguousarray(img_save, dtype=np.uint8)
             pred_bbox_save = pred_bbox[rand_idx].clone().detach().cpu().numpy()
             target_bbox_save = target_bbox[rand_idx].clone().detach().cpu().numpy()
-            #print(rand_idx, phrase)
             phrase_save = phrase[rand_idx] 
             
             SAVE_PATH_IMG = args.save_data + "/imgs/" + str(save_count) + '.png'
             SAVE_PATH_PHRASE = args.save_data + "/phrases.txt"
             
             # draw bbox on image
-            #print(img_save.shape)
             left_pred = int(pred_bbox_save[0])
             top_pred = int(pred_bbox_save[1])
             right_pred = int(pred_bbox_save[2])
@@ -231,9 +227,6 @@ def test_epoch(args, test_loader, model, img_size=512):
             plt.imsave(SAVE_PATH_IMG, img_save)
             with open(SAVE_PATH_PHRASE, 'a') as f:
                 f.write('[' + str(save_count) + ']' + '\t' + phrase_save + '\n')
-                                
-#                writer.add_image("img_" + str(save_count), img_save)
-#                writer.add_text("query_" + str(save_count) , phrase)
                 
             save_count += 1
 

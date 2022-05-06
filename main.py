@@ -9,8 +9,6 @@ import torch.optim
 import torch.utils.data.distributed
 # import torch.backends.cudnn as cudnn
 
-from torch.utils.tensorboard import SummaryWriter
-
 from work.utils.utils import *
 from work.model.criterion import Criterion
 from work.model.grounding_model import GroundingModel
@@ -90,6 +88,7 @@ def getargs():
                         help='percentage of data to be used')
     parser.add_argument('--save_data', default='', type=str,
                         help='save path for images and queries')
+    parser.add_argument('use_co_attention', default=False, action='store_true')
     args = parser.parse_args()
 
     # refcoco/refcoco+
@@ -107,10 +106,6 @@ def getargs():
 
 def train(args):
 
-    # log
-    #if args.save_data:
-    #    writer = SummaryWriter(args.save_data + '/runs/')
-    
     if args.savename == 'default':
         args.savename = f'model_{args.dataset}_batch_{args.batch_size}'
 

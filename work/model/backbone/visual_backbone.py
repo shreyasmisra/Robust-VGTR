@@ -129,12 +129,8 @@ class Neck(nn.Module):
         return pooled_feats    
     
     def forward(self, feats):
-        #print('In Forward of Neck')
+
         assert len(feats) == self.n_levels
-        #print('len(feats) = ', len(feats))
-        
-        #for f in feats:
-        #    print('len(f): ', f.shape)
 
         for i in range(self.n_levels): 
             feats[i] = self.lat_conv[i](feats[i])
