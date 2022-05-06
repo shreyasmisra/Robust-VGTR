@@ -101,7 +101,7 @@ class TextualEncoder(nn.Module):
         super().__init__()
         self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", padding=True)
         self.bert_model = BertModel.from_pretrained("bert-base-uncased", output_hidden_states=True)
-        self.fc1 = nn.Linear(768,256)
+        
         #self.rnn = RNNEncoder(args.vocab_size, args.embedding_dim,
          #             args.hidden_dim, args.rnn_hidden_dim,
           #            bidirectional=True,
@@ -110,13 +110,11 @@ class TextualEncoder(nn.Module):
           #            n_layers=args.rnn_layers,
           #            variable_lengths=True,
           #            rnn_type='lstm')
+        
         self.parser = nn.ModuleList([PhraseAttention(input_dim=args.rnn_hidden_dim * 2)
                        for _ in range(args.num_exp_tokens)])
 
     def forward(self, sent):
-    # sent -> phrase
-        #max_len = (sent != 0).sum(1).max().item()
-        #sent = sent[:, :max_len]
         tokenized_inp = self.tokenizer(sent, return_tensors="pt", padding=True)
         
         input_ids = tokenized_inp['input_ids'].cuda()
@@ -132,14 +130,12 @@ class TextualEncoder(nn.Module):
         input_ids = input_ids.detach().cpu()
         token_type_ids = token_type_ids.detach().cpu()
         attention_mask = attention_mask.detach().cpu()
-        #output_vec = self.fc1(context)
-       
+    
         #context, hidden, embedded = self.rnn(sent)  # [bs, maxL, d]
-        # sent_feature = [module(context, embedded, sent)[-1] for module in self.parser]
-        #print(hidden.shape, embed.shape, context.shape)
-        
+        # sent_feature = [module(context, embedded, sent)[-1] for module in self.parser]        
         #sent_feature = [module(context, embed, sent)[-1] for module in self.parser]
         #return torch.stack(sent_feature, dim=1)
+        
         return context
 
 

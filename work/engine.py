@@ -23,11 +23,9 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
 
     for batch_idx, (imgs, word_id, word_mask, bbox, phrase) in enumerate(train_loader):
         imgs = imgs.cuda()
-        #word_id = word_id.cuda()
         bbox = bbox.cuda()
         bbox = torch.clamp(bbox, min=0, max=args.size - 1)
         image = Variable(imgs)
-        #word_id = Variable(word_id)
         bbox = Variable(bbox)
 
         norm_bbox = torch.zeros_like(bbox).cuda()
@@ -86,10 +84,6 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
             logging.info(print_str)
     
     torch.cuda.empty_cache()
-    
-    #if args.log_plot == True:
-      #  wandb.log({"epoch":epoch,"train/loss ":losses.avg})
-
 
 def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
 
@@ -102,10 +96,8 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
 
     for batch_idx, (imgs, word_id, word_mask, bbox, phrase) in enumerate(val_loader):
         imgs = imgs.cuda()
-        #word_id = word_id.cuda()
         bbox = bbox.cuda()
         image = Variable(imgs)
-        #word_id = Variable(word_id)
         bbox = Variable(bbox)
         bbox = torch.clamp(bbox, min=0, max=args.size-1)
 
@@ -117,7 +109,6 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
         norm_bbox[:, 3] = bbox[:, 3] - bbox[:, 1]    # h
 
         with torch.no_grad():
-            #pred_box = model(image, word_id)  # [bs, C, H, W]
             pred_box = model(image, phrase)
 
         pred_bbox = pred_box.detach().cpu()
@@ -132,9 +123,7 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
         # metrics
         iou = bbox_iou(pred_bbox, target_bbox.data.cpu(), x1y1x2y2=True)
         # accu = np.sum(np.array((iou.data.cpu().numpy() > 0.5), dtype=float)) / args.batch_size
-        accu = np.sum(np.array((iou.data.cpu().numpy() > 0.5), dtype=float)) / imgs.size(0)
-
-        
+        accu = np.sum(np.array((iou.data.cpu().numpy() > 0.5), dtype=float)) / imgs.size(0)        
             
         acc.update(accu, imgs.size(0))
         miou.update(torch.mean(iou).item(), imgs.size(0))
@@ -158,8 +147,6 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
     
     torch.cuda.empty_cache()
     
-    #if args.log_plot == True:
-     #       wandb.log({"epoch":train_epoch,"val/accuracy ":acc.avg})
     return acc.avg, miou.avg
 
 def test_epoch(test_loader, model, img_size=512):
@@ -170,12 +157,8 @@ def test_epoch(test_loader, model, img_size=512):
 
     for batch_idx, (imgs, word_id, word_mask, bbox, phrase) in enumerate(test_loader):
         imgs = imgs.cuda()
-        #word_id = word_id.cuda()
         bbox = bbox.cuda()
         image = Variable(imgs)
-        #word_id = Variable(word_id)
-        #phrase = phrase.cuda()
-        #phrase = Variable(phrase)
         bbox = Variable(bbox)
         bbox = torch.clamp(bbox, min=0, max=img_size-1)
 

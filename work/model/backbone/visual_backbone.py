@@ -117,24 +117,11 @@ class Neck(nn.Module):
     def upsample_add(self, feat1, feat2):
         _, _, H, W = feat2.size()
         return torch.nn.functional.interpolate(feat1, size=(H, W), mode='bilinear',
-                                               align_corners=True) + feat2
-
-    def pool_features(self, feats, out_size = 4):
-        pooled_feats = []
-        pool = nn.AdaptiveAvgPool2d((out_size, out_size))
-        
-        for f in feats:
-            pooled_feats.append(pool(f))
-        
-        return pooled_feats    
+                                               align_corners=True) + feat2   
     
     def forward(self, feats):
-#        print('In Forward of Neck')
+
         assert len(feats) == self.n_levels
-#        print('len(feats) = ', len(feats))
-        
-#        for f in feats:
-#            print('len(f): ', f.shape)
 
         for i in range(self.n_levels): 
             feats[i] = self.lat_conv[i](feats[i])
@@ -154,9 +141,7 @@ class Neck(nn.Module):
         out = torch.cat(Out, dim=1)
         out = self.post_conv(out)
 
-        #feats = self.pool_features(feats)
-
-        return out, feats
+        return out
 
 
 class VisualBackbone(nn.Module):
@@ -170,9 +155,9 @@ class VisualBackbone(nn.Module):
         self.neck = Neck(4, [2048, 1024, 512, 256], args=args)
 
     def forward(self, img):
-        out, feats = self.neck(self.cnn(img))
+        out = self.neck(self.cnn(img))
 
-        return out, feats
+        return out
 
 def build_visual_backbone(args):
     return VisualBackbone(args)
