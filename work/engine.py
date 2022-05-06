@@ -7,7 +7,6 @@ import torch
 from torch.autograd import Variable
 from .utils.utils import AverageMeter, xywh2xyxy, bbox_iou
 
-
 def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img_size=512):
 
     batch_time = AverageMeter()
@@ -85,8 +84,11 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
 
             print(print_str)
             logging.info(print_str)
-        
-        torch.cuda.empty_cache()
+    
+    torch.cuda.empty_cache()
+    
+    #if args.log_plot == True:
+      #  wandb.log({"epoch":epoch,"train/loss ":losses.avg})
 
 
 def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
@@ -156,6 +158,8 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
     
     torch.cuda.empty_cache()
     
+    #if args.log_plot == True:
+     #       wandb.log({"epoch":train_epoch,"val/accuracy ":acc.avg})
     return acc.avg, miou.avg
 
 def test_epoch(test_loader, model, img_size=512):
