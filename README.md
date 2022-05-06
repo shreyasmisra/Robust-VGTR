@@ -1,4 +1,9 @@
-# Visual Grounding with Transformers
+# Robust Visual Grounding with Transformers
+
+## Early Attention Branch
+
+This branch contains the proposed Early Dot Attention and Early Co-Attention mechanisms. The code for these is in work/model/backbone/early_attention.py file.
+This project is forked from the Visual Grounding with Transformers paper and more informationis provided below.
 
 
 ##  Overview
