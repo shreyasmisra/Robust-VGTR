@@ -11,6 +11,11 @@ The model is trained on the RefCOCO dataset and tested on RefCOCO and RefCOCO+ t
 
 ![Alt text](result.PNG?raw=true "Title")
 
+Contributors - 
+- Shreyas Misra
+- Nitika Suresh
+- Jigarkumar Patel
+- Gunjan Sethi
 
 ##  Overview
 
