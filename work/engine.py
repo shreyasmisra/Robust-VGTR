@@ -6,7 +6,6 @@ import numpy as np
 import torch
 from torch.autograd import Variable
 from .utils.utils import AverageMeter, xywh2xyxy, bbox_iou
-import wandb
 
 
 def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img_size=512):
@@ -42,9 +41,6 @@ def train_epoch(args, train_loader, model, optimizer, epoch, criterion=None, img
         # forward
         pred_box = model(image, word_id)  # [bs, C, H, W]
         loss, loss_box, loss_giou = criterion(pred_box, norm_bbox, img_size=img_size)
-
-        if args.log_plot == True:
-            wandb.log({"epoch":epoch,"train/loss ":loss.item()})
 
         optimizer.zero_grad()
         loss.backward()
@@ -132,9 +128,6 @@ def validate_epoch(args, val_loader, model, train_epoch, img_size=512):
         # accu = np.sum(np.array((iou.data.cpu().numpy() > 0.5), dtype=float)) / args.batch_size
         accu = np.sum(np.array((iou.data.cpu().numpy() > 0.5), dtype=float)) / imgs.size(0)
 
-        if args.log_plot == True:
-            wandb.log({"epoch":train_epoch,"val/accuracy ":acc.val.item()})
-            
         acc.update(accu, imgs.size(0))
         miou.update(torch.mean(iou).item(), imgs.size(0))
 

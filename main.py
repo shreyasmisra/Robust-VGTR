@@ -90,19 +90,12 @@ def getargs():
                         help='pretrained cnn weights')
     parser.add_argument('--data_perc', default='0.3', type=str,
                         help='percentage of data to be used')
-    parser.add_argument('--log_plot', default=False, type=bool,
-                        help='to plot logs using wandb')
     args = parser.parse_args()
 
-    if args.log_plot == True:
-        #Please pip install wandb if an error shows up
-        wandb.init(project="visual_grounding", reinit=True)
-
-
     # refcoco/refcoco+
-    args.split = 'testA' if args.dataset == 'refcoco' or args.dataset == 'refcoco+' else 'test'
-    # refcocog
-    args.split = 'val' if args.dataset == 'refcocog' else 'test'
+    # args.split = 'testA' if args.dataset == 'refcoco' or args.dataset == 'refcoco+' else 'test'
+    # # refcocog
+    # args.split = 'val' if args.dataset == 'refcocog' else 'test'
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
